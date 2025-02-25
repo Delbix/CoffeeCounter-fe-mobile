@@ -1,5 +1,10 @@
 package it.insiel.coffeecounter.GestioneUtenti
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.repeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.ktor.client.statement.bodyAsText
@@ -39,6 +45,7 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
     var nome by remember { mutableStateOf(persona.nome ) }
     var cognome by remember { mutableStateOf(persona.cognome ) }
     var errorMsg by remember { mutableStateOf( "" ) }
+    val shakeAnim = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     //parametri per la finestra modale
     var dialogHeader by remember { mutableStateOf( "" ) }
@@ -55,7 +62,7 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Aggiungi un utente al database")
+        Text("Modifica utente")
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = nome,
@@ -72,20 +79,55 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
             scope.launch {
                 if (nome == "") {
                     errorMsg = "Il campo Nome deve essere valorizzato"
-                } else {
-                    try {
-                        val personaMod = Persona(persona.id, nome, cognome, persona.ha_pagato, persona.ha_partecipato, false)
-                        val response = sendPersona(personaMod)
-                        val personaResponse: Persona = Json.decodeFromString<Persona>(response.bodyAsText())
-                        dialogHeader = "Dati modificati con successo:"
-                        dialogHeaderColor = Color.Blue
-                        dialogMessage = "Nome: ${persona.nome} --> ${personaResponse.nome} \nCognome: ${persona.cognome} --> ${personaResponse.cognome}"
-                    } catch (e: Exception) {
-                        dialogHeader = "Errore nell'invio dei dati:"
-                        dialogHeaderColor = Color.Red
-                        dialogMessage = e.message!!
+                    scope.launch {
+                        shakeAnim.animateTo(
+                            targetValue = 1f,
+                            animationSpec = repeatable(
+                                iterations = 3,
+                                animation = tween(durationMillis = 100, easing = LinearEasing),
+                                repeatMode = RepeatMode.Reverse
+                            )
+                        )
+                        shakeAnim.snapTo(0f)
                     }
-                    isDialogOpenCommon.value = true
+                } else {
+                    if ( persona.nome == nome && persona.cognome == cognome ){
+                        errorMsg = "Non hai modificato nulla!"
+                        scope.launch {
+                            shakeAnim.animateTo(
+                                targetValue = 1f,
+                                animationSpec = repeatable(
+                                    iterations = 3,
+                                    animation = tween(durationMillis = 100, easing = LinearEasing),
+                                    repeatMode = RepeatMode.Reverse
+                                )
+                            )
+                            shakeAnim.snapTo(0f)
+                        }
+                    } else {
+                        try {
+                            val personaMod = Persona(
+                                persona.id,
+                                nome,
+                                cognome,
+                                persona.ha_pagato,
+                                persona.ha_partecipato,
+                                false
+                            )
+                            val response = sendPersona(personaMod)
+                            val personaResponse: Persona =
+                                Json.decodeFromString<Persona>(response.bodyAsText())
+                            dialogHeader = "Dati modificati con successo:"
+                            dialogHeaderColor = Color.Blue
+                            dialogMessage =
+                                "Nome: ${persona.nome} --> ${personaResponse.nome} \nCognome: ${persona.cognome} --> ${personaResponse.cognome}"
+                        } catch (e: Exception) {
+                            dialogHeader = "Errore nell'invio dei dati:"
+                            dialogHeaderColor = Color.Red
+                            dialogMessage = e.message!!
+                        }
+                        isDialogOpenCommon.value = true
+                    }
                 }
             }
         }) {
@@ -99,7 +141,7 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
         }
 
         if (errorMsg != "") {
-            Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp))
+            Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f) )
         }
 
         CommonDialog(isDialogOpenCommon.value, dialogMessage, dialogHeader, dialogHeaderColor) {
