@@ -34,6 +34,20 @@ import androidx.compose.ui.window.Dialog
  * onDismiss -> azione da eseguire se non viene confermata
  */
 
+/**
+ * COMPONENTE GENERICO
+ * Finestra di dialogo per la conferma di un operazione
+ *
+ * **Parametri**
+ * @param isDialogOpen [Boolean] = visibilità del componente
+ * @param messaggio [String] = messaggio da visualizzare [default=messaggio di default]
+ * @param header [String] = titolo della finestra [default=titolo di default]
+ * @param headerColor [Color] = colore di sfondo del titolo della finestra [default=colore di default]
+ * **Lambda**
+ * @param onConfirm = evento di chiusura con conferma
+ * @param onDismiss = evento di chiusura senza conferma
+ */
+
 @Composable
 fun ConfirmDialog( isDialogOpen: Boolean, messaggio: String = "Sei sicuro?", header: String = "ModalDialog", headerColor: Color = Color.Blue,
                    onConfirm: () -> Unit,

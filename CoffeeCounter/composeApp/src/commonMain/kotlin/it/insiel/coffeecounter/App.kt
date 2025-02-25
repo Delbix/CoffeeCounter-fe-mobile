@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 @Preview
 
         /**
-         * entry point dell'app
+         * ENTRY POINT dell'app
          * Gestisco:
          * - Le view (currentView)
          * - Il menu laterale a scomparsa (Drawer)

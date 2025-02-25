@@ -1,7 +1,6 @@
 package it.insiel.coffeecounter.utils
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -20,6 +18,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+
+/**
+ * COMPONENTE GENERICO
+ * Finestra di dialogo per messaggi generici
+ *
+ * **Parametri**
+ * @param isDialogOpen [Boolean] = visibilità del componente
+ * @param messaggio [String] = messaggio da visualizzare
+ * @param header [String] = titolo della finestra [default=titolo di default]
+ * @param headerColor [Color] = colore di sfondo del titolo della finestra [default=colore di default]
+ * **Lambda**
+ * @param onDismissRequest = evento di chiusura del dialog
+ */
 
 @Composable
 fun CommonDialog(isDialogOpen: Boolean, messaggio: String, header: String = "ModalDialog", headerColor: Color = Color.Blue, onDismissRequest: () -> Unit) {

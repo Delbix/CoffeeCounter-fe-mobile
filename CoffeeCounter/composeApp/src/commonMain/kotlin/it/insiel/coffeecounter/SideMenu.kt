@@ -12,6 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * VISTA
+ * del menu a scomparsa laterale
+ *
+ * **Parametri**
+ *
+ * **Lambda**
+ * @param onUserManagementClick = viene gestito da App.kt per cambiare la vista
+ * @param onStatisticsClick = viene gestito da App.kt per cambiare la vista
+ */
+
 @Composable
 fun SideMenu(
     onUserManagementClick: () -> Unit,

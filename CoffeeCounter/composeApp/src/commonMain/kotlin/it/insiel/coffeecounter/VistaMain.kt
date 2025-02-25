@@ -13,6 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * VISTA
+ * vista della schermata home
+ *
+ * **Parametri**
+ *
+ * **Lambda**
+ * @param onButtonAutomaticoClick = viene gestito da App.kt per cambiare la vista
+ * @param onButtonManualeClick = viene gestito da App.kt per cambiare la vista
+ */
+
 @Composable
 fun VistaMain(onButtonAutomaticoClick: () -> Unit, onButtonManualeClick: () -> Unit ) {
     Column(
@@ -29,7 +40,7 @@ fun VistaMain(onButtonAutomaticoClick: () -> Unit, onButtonManualeClick: () -> U
                 .height(100.dp)
                 .padding(8.dp)
         ) {
-            Text("Caffe automatico")
+            Text("Caffè automatico")
         }
         Button(
             onClick = onButtonManualeClick,
@@ -38,7 +49,7 @@ fun VistaMain(onButtonAutomaticoClick: () -> Unit, onButtonManualeClick: () -> U
                 .height(100.dp)
                 .padding(8.dp)
         ) {
-            Text("Caffe manuale")
+            Text("Caffè manuale")
         }
     }
 }
