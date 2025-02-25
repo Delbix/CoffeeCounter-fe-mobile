@@ -6,6 +6,10 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.client.plugins.logging.*
 
+/**
+ * MODULO
+ * che gestisce la connessione al serve di backend
+ */
 
 expect fun getHttpClientEngine(): HttpClientEngine
 

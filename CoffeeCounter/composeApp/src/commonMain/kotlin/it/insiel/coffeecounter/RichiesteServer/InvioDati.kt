@@ -9,7 +9,17 @@ import it.insiel.coffeecounter.AppInit
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-//per l'inserimento di una transazione nel db
+/**
+ * MODULO
+ * che gestisce l'invio di dati al serve sotto forma di chiamate http
+ */
+
+
+/**
+ * Inserimento di una transazione in db
+ * @param transazione [Transazione] = transazione da inserire
+ * @return HttpResponse, con il contenuto della risposta del server
+ */
 suspend fun sendTransazione(transazione: Transazione): HttpResponse {
     val client = createHttpClient()
     return client.post("${AppInit.API_URL}/angular/db/transazione") {
@@ -18,7 +28,11 @@ suspend fun sendTransazione(transazione: Transazione): HttpResponse {
     }
 }
 
-//per l'inserimento di un nuovo utente in db
+/**
+ * Inserimento/modifica di un utente in db
+ * @param persona [Persona] = utente da inserire/modificare
+ * @return HttpResponse, con il contenuto della risposta del server
+ */
 suspend fun sendPersona( persona: Persona ): HttpResponse{
     val client = createHttpClient()
     return client.post("${AppInit.API_URL}/angular/db/persona") {
@@ -28,6 +42,11 @@ suspend fun sendPersona( persona: Persona ): HttpResponse{
 }
 
 //per l'eliminazione di un utente
+/**
+ * Eliminazione di un utente dal db
+ * @param persona [Persona] = utente da eliminare
+ * @return HttpResponse, con il contenuto della risposta del server
+ */
 suspend fun eliminaPersona( persona: Persona ): HttpResponse{
     val client = createHttpClient()
     return client.post("${AppInit.API_URL}/angular/db/persona/elimina") {

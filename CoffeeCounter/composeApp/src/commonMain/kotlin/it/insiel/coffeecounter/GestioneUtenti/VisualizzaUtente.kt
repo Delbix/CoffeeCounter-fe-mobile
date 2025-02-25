@@ -38,6 +38,11 @@ import kotlinx.serialization.json.Json
 /**
  * VISTA
  * Visualizza/modifica/elimina utente specifico
+ *
+ * **Parametri**
+ * @param persona [Persona] = utente oggetto di visualizzazione
+ * **Lambda**
+ * @param onCloseModal = viene gestito da App.kt per cambiare la vista
  */
 
 @Composable

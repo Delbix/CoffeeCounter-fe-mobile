@@ -1,24 +1,27 @@
 package it.insiel.coffeecounter.RichiesteServer
 
-import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import it.insiel.coffeecounter.AppInit
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-//suspend fun fetchPersonas(): List<Persona> {
-//    val client = createHttpClient()
-//    val response: HttpResponse = client.get("http://localhost:8080/angular/transazione")
-//    val responseBody: String = response.bodyAsText()
-//    return Json.decodeFromString(responseBody)
-//}
+/**
+ * MODULO
+ * per la gestione delle richieste di dati al server
+ */
 
+/**
+ * CLASSE
+ * che determina il tipo di ritorno per le funzioni presenti in questo modulo
+ */
 sealed class Result {
     data class Success(val data: List<Persona>) : Result()
     data class Error(val message: String) : Result()
 }
 
+/**
+ * Chiama il server per chiedere l'elenco di persone salvate nel database
+ */
 suspend fun fetchPersonas(): Result {
     return try {
         val client = createHttpClient()

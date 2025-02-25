@@ -34,6 +34,15 @@ import it.insiel.coffeecounter.Transazioni.ValoriTabellaTransazioni
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * VISTA
+ * delle statistiche dell'app
+ *
+ * **Funzioni ausiliarie**
+ * pagatore = vedi descr funzione
+ * bevitoreAccanito = vedi descr funzione
+ */
+
 @Composable
 fun vistaStatistiche() {
     val scope: CoroutineScope = rememberCoroutineScope()
@@ -91,7 +100,7 @@ fun vistaStatistiche() {
 
 /**
  * Funzione che torna la persona che ha pagato + volte
- * @param List<Persona>
+ * @param persone [List<Persona>] = elenco su cui eseguire l'operazione
  * @return Persona, la persona con ha_partecipato + grande.. se non ci sono persone ritorno una persona con id -1 (ERRORE)
  */
 fun pagatore(persone: List<Persona>): Persona {
@@ -108,7 +117,7 @@ fun pagatore(persone: List<Persona>): Persona {
 
 /**
  * Funzione che torna la persona che ha partecipato + volte
- * @param List<Persona>
+ * @param persone [List<Persona>] = elenco su cui eseguire l'operazione
  * @return Persona, la persona con ha_partecipato + grande.. se non ci sono persone ritorno una persona con id -1 (ERRORE)
  */
 fun bevitoreAccanito(persone: List<Persona>): Persona {

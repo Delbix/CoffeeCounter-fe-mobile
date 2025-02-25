@@ -22,8 +22,16 @@ import androidx.compose.ui.unit.dp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 
 /**
+ * MODULO
  * gestisce una riga di tipo persona
- * @Require di essere chiamato da tabella transazione
+ * @Require di essere chiamato da TabellaTransazione
+ *
+ * **Parametri**
+ * @param persona [Persona] = persona oggetto di questa riga
+ * @param valoriPadre [ValoriTabellaTransazioni] = valori passati da TabellaTransazioni
+ * @param manuale [Boolean] = abilita scelta manuale di chi paga
+ * **Lambda**
+ * @param onMyEvent = evento che aggiorna i valori di ValoriTabellaTransazioni su chi chiama questo elemento
  */
 
 @Composable

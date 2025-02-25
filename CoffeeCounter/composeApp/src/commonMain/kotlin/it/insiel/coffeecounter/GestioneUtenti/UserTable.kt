@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,12 +30,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
+ * MODULO
  * Gestione della tabella di elenco degli utenti
- * Elemento di VistaUtenti
+ * @required essere chimato da VistaUtenti
+ *
+ * **Parametri**
+ *
+ * **Lambda**
+ * @param onVisualizzaUtente = per cambiare la vista per la visualizzazione di un utente specifico
+ * @param onErrorDetected = per cambiare la vista in caso di errore
  */
 
 @Composable
-fun userTable( onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit ) {
+fun UserTable(onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit ) {
 
     //varibili utilizzate localmente
     var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }

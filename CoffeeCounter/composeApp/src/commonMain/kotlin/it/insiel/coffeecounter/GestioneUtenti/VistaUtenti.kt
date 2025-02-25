@@ -18,8 +18,12 @@ import it.insiel.coffeecounter.RichiesteServer.Persona
  * VISTA
  * della gestione utenti
  *
- * onClickAddUser : viene gestito da App.kt per cambiare la vista
- * onVisualizzaUtente : viene gestito da App.kt per cambiare la vista
+ * **Parametri**
+ *
+ * **Lambda**
+ * @param onClickAddUser = viene gestito da App.kt per cambiare la vista
+ * @param onVisualizzaUtente = viene gestito da App.kt per cambiare la vista per la visualizzazione di un utente specifico
+ * @param onErrorDetected = viene gestito da App.kt per cambiare la vista in caso di errore
  */
 
 @Composable
@@ -35,7 +39,7 @@ fun VistaUtenti( onClickAddUser: () -> Unit, onVisualizzaUtente: (Persona) -> Un
         Spacer(modifier = Modifier.height(16.dp))
         Text("Elenco Utenti", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        userTable(
+        UserTable(
             onVisualizzaUtente = { persona ->
                 onVisualizzaUtente( persona )
             },

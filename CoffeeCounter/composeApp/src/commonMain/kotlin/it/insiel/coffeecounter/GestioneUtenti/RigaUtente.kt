@@ -17,10 +17,14 @@ import androidx.compose.ui.unit.dp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 
 /**
+ * MODULO
  * gestisce una riga di tipo persona
  * @Require di essere chiamato da UserTable
  *
- * onClickVisualizza = gestione della vista di modifica
+ * **Parametri**
+ *  @param persona [Persona] = persona oggetto di questa riga
+ * **Lambda**
+ * @param onClickVisualizza = gestione della vista di modifica della persona in oggetto
  */
 
 @Composable

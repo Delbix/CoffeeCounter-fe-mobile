@@ -22,6 +22,11 @@ import kotlinx.coroutines.launch
 /**
  * VISTA
  * della creazione di una transazione
+ *
+ * **Parametri**
+ * @param manuale [Boolean] = abilita scelta manuale di chi paga
+ * **Lambda**
+ * @param onSuccesfullySend = viene gestito da App.kt per cambiare la vista quando ho inviato i dati al server
  */
 
 @Composable

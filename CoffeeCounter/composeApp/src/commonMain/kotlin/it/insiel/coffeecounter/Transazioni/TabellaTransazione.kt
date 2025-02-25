@@ -35,8 +35,20 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 
 /**
+ * MODULO
  * Gestione della tabella di una transazione
- * Elemento di VistaTransazioniNew
+ * @required essere chiamato da VistaTransazioniNew
+ *
+ * **Parametri**
+ * @param valoriPadre [ValoriTabellaTransazioni] = valori passati da VistaTransazioniNew
+ * @param scope [CoroutineScope] = scope di VistaTransazioniNew
+ * @param manuale [Boolean] = abilita scelta manuale di chi paga
+ * **Lambda**
+ * @param onMyEvent = evento che aggiorna i valori di ValoriTabellaTransazioni nel chiamante
+ * @param onCloseModal = evento generato dalla chiusura della finestra modale
+ *
+ * **Funzioni ausiliarie**
+ * formattaPartecipanti(...) = vedi descr funzione
  */
 
 @Composable

@@ -16,6 +16,16 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.draw.scale
 import kotlinx.serialization.json.Json
 
+/**
+ * VISTA
+ * gestisce l'inserimento di un nuovo utente
+ *
+ * **Parametri**
+ *
+ * **Lambda**
+ * @param onCloseModal = viene gestito da App.kt per cambiare la vista
+ */
+
 @Composable
 fun VistaAddUser( onCloseModal: () -> Unit ) {
     var nome by remember { mutableStateOf("") }
