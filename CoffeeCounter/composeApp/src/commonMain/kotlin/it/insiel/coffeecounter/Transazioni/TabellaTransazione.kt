@@ -54,7 +54,11 @@ fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineSc
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (valori.errorMessage != null) {
-            Text(text = valori.errorMessage.toString(), color = Color.Red, modifier = Modifier.padding(8.dp))
+            //messaggio di errore nel dialog
+            dialogHeader = "ERRORE!!"
+            dialogHeaderColor = Color.Red
+            dialogMessage = "Errore di ricezione dei dati: \n${valori.errorMessage}"
+            isDialogOpen.value = true
         }
 
         LazyColumn(
@@ -84,23 +88,21 @@ fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineSc
                     onMyEvent(valori)
                 }
             }
-            item { //TODO forse non viene effettivamente mai usato, controlla
-                if (valori.responseMessage != null) {
-                    Text(text = valori.responseMessage.toString(), color = Color.Red, modifier = Modifier.padding(8.dp))
-                }
-            }
         }
 
+        //bottone di invio dei dati
         Button(
             onClick = {
                 scope.launch {
                     try {
                         if ( valori.transazione.pagata_da == null || valori.transazione.partecipanti.isEmpty() ){
+                            //se la transazione non è pronta per l'invio
                             dialogHeader = "ERRORE nella creazione della transazione!"
                             dialogHeaderColor = Color.Red
                             dialogMessage = "La lista dei partecipanti è vuota o manca chi paga! \nNon verrà registrato nulla!"
                             isDialogOpen.value = true
                         } else {
+                            //transazione pronta all'invio, quindi facciamo il tentativo
                             valori.transazione.data = Clock.System.now()
                                 .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
                             val response = sendTransazione(valori.transazione)
@@ -112,13 +114,19 @@ fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineSc
                             isDialogOpen.value = true
                         }
                     } catch (e: Exception) {
-                        valori = valori.copy( responseMessage = "Errore nell'invio dei dati: ${e.message}")
+                        //messaggio di errore nel dialog
+                        dialogHeader = "ERRORE!!"
+                        dialogHeaderColor = Color.Red
+                        dialogMessage = "Errore nell'invio dei dati: \n${e.message}"
+                        isDialogOpen.value = true
                     }
                     onMyEvent(valori)
                 }
             }) {
             Text("Invia")
         }
+
+        //finestra modale per i messaggi di stato
         CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
             isDialogOpen.value = false
             onCloseModal() //ritorno alla schermata home
