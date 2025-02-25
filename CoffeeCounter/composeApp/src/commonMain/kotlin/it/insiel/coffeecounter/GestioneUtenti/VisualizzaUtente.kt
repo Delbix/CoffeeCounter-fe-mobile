@@ -16,6 +16,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
     var cognome by remember { mutableStateOf(persona.cognome ) }
     var errorMsg by remember { mutableStateOf( "" ) }
     val shakeAnim = remember { Animatable(0f) }
+    val triggerAnim = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     //parametri per la finestra modale
     var dialogHeader by remember { mutableStateOf( "" ) }
@@ -59,6 +61,18 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
     val isDialogOpenCommon = remember { mutableStateOf(false) }
     val isDialogOpenConfirm = remember { mutableStateOf(false) }
 
+
+    LaunchedEffect(triggerAnim.value){
+        shakeAnim.animateTo(
+            targetValue = 1f,
+            animationSpec = repeatable(
+                iterations = 3,
+                animation = tween(durationMillis = 100, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+        shakeAnim.snapTo(0f)
+    }
 
     Column(
         modifier = Modifier
@@ -84,31 +98,11 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
             scope.launch {
                 if (nome == "") {
                     errorMsg = "Il campo Nome deve essere valorizzato"
-                    scope.launch {
-                        shakeAnim.animateTo(
-                            targetValue = 1f,
-                            animationSpec = repeatable(
-                                iterations = 3,
-                                animation = tween(durationMillis = 100, easing = LinearEasing),
-                                repeatMode = RepeatMode.Reverse
-                            )
-                        )
-                        shakeAnim.snapTo(0f)
-                    }
+                    triggerAnim.value = !triggerAnim.value
                 } else {
                     if ( persona.nome == nome && persona.cognome == cognome ){
                         errorMsg = "Non hai modificato nulla!"
-                        scope.launch {
-                            shakeAnim.animateTo(
-                                targetValue = 1f,
-                                animationSpec = repeatable(
-                                    iterations = 3,
-                                    animation = tween(durationMillis = 100, easing = LinearEasing),
-                                    repeatMode = RepeatMode.Reverse
-                                )
-                            )
-                            shakeAnim.snapTo(0f)
-                        }
+                        triggerAnim.value = !triggerAnim.value
                     } else {
                         try {
                             val personaMod = Persona(
