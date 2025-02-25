@@ -1,0 +1,96 @@
+package it.insiel.coffeecounter.GestioneUtenti
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import it.insiel.coffeecounter.RichiesteServer.Persona
+import it.insiel.coffeecounter.RichiesteServer.Result
+import it.insiel.coffeecounter.RichiesteServer.fetchPersonas
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+/**
+ * Gestione della tabella di elenco degli utenti
+ * Elemento di VistaUtenti
+ */
+
+@Composable
+fun userTable( onVisualizzaUtente: (Persona) -> Unit ) {
+
+    //varibili utilizzate localmente
+    var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val scope: CoroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        scope.launch {
+            when (val result = fetchPersonas()) {
+                is Result.Success -> {
+                    persone = result.data
+                }
+                is Result.Error -> {
+                    errorMessage = result.message
+                }
+            }
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()
+        .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (errorMessage != null) {
+            Text(text = errorMessage!!, color = Color.Red, modifier = Modifier.padding(8.dp))
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(3.dp)
+                        .background(Color.Blue, RoundedCornerShape(4.dp))
+                ) {
+                    Text("Nominativo", modifier = Modifier.padding(8.dp).weight(1f),
+                        fontSize = 16.sp,
+                        color = Color.White )
+                    Text("Pagato/Partecipato", modifier = Modifier.padding(8.dp).weight(1f),
+                        fontSize = 16.sp,
+                        color = Color.White )
+                    Text("Modifica", modifier = Modifier.padding(8.dp).weight(1f),
+                        fontSize = 16.sp,
+                        color = Color.White )
+                }
+            }
+            items(persone) { persona ->
+                RigaUtente(persona){ persona ->
+                    onVisualizzaUtente( persona )
+                }
+            }
+        }
+    }
+}
+
+
+
