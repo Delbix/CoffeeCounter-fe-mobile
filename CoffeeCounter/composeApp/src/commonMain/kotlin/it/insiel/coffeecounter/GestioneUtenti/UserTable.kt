@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.Result
 import it.insiel.coffeecounter.RichiesteServer.fetchPersonas
+import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -35,12 +36,16 @@ import kotlinx.coroutines.launch
  */
 
 @Composable
-fun userTable( onVisualizzaUtente: (Persona) -> Unit ) {
+fun userTable( onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit ) {
 
     //varibili utilizzate localmente
     var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope: CoroutineScope = rememberCoroutineScope()
+    //parametri per la finestra modale
+    var dialogHeader by remember { mutableStateOf( "" ) }
+    var dialogHeaderColor by remember { mutableStateOf( Color.Red ) } //default colore Rosso per errori
+    var dialogMessage by remember { mutableStateOf( "" ) }
+    val isDialogOpen = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         scope.launch {
@@ -49,7 +54,9 @@ fun userTable( onVisualizzaUtente: (Persona) -> Unit ) {
                     persone = result.data
                 }
                 is Result.Error -> {
-                    errorMessage = result.message
+                    dialogHeader = "ERRORE"
+                    dialogMessage = "Errore di ricezione dei dati: \n${result.message} "
+                    isDialogOpen.value = true
                 }
             }
         }
@@ -59,10 +66,6 @@ fun userTable( onVisualizzaUtente: (Persona) -> Unit ) {
         .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (errorMessage != null) {
-            Text(text = errorMessage!!, color = Color.Red, modifier = Modifier.padding(8.dp))
-        }
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -88,6 +91,11 @@ fun userTable( onVisualizzaUtente: (Persona) -> Unit ) {
                     onVisualizzaUtente( persona )
                 }
             }
+        }
+
+        CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+            isDialogOpen.value = false
+            onErrorDetected()
         }
     }
 }

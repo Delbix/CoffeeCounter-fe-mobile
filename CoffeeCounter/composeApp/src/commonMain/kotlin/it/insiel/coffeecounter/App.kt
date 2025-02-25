@@ -87,7 +87,9 @@ fun App() {
                         onVisualizzaUtente = {
                             persona -> currentView = "visualizzaUtente"
                             user = persona
-                        })
+                        },
+                        onErrorDetected = { currentView = "main" }
+                    )
                     "aggiungiUtente" -> VistaAddUser( onCloseModal = { currentView = "gestioneUtenti" } )
                     "statistiche" -> vistaStatistiche()
                     "visualizzaUtente" -> VisualizzaUtente( user, onCloseModal = { currentView = "gestioneUtenti"} )

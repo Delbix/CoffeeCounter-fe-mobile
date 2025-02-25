@@ -23,7 +23,7 @@ import it.insiel.coffeecounter.RichiesteServer.Persona
  */
 
 @Composable
-fun VistaUtenti( onClickAddUser: () -> Unit, onVisualizzaUtente: (Persona) -> Unit ) {
+fun VistaUtenti( onClickAddUser: () -> Unit, onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit ) {
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -35,8 +35,11 @@ fun VistaUtenti( onClickAddUser: () -> Unit, onVisualizzaUtente: (Persona) -> Un
         Spacer(modifier = Modifier.height(16.dp))
         Text("Elenco Utenti", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        userTable(){ persona ->
-            onVisualizzaUtente( persona )
-        }
+        userTable(
+            onVisualizzaUtente = { persona ->
+                onVisualizzaUtente( persona )
+            },
+            onErrorDetected = onErrorDetected
+        )
     }
 }
