@@ -61,7 +61,7 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
     val isDialogOpenCommon = remember { mutableStateOf(false) }
     val isDialogOpenConfirm = remember { mutableStateOf(false) }
 
-
+    //viene eseguita solo quando il triggerAnim cambia valore
     LaunchedEffect(triggerAnim.value){
         shakeAnim.animateTo(
             targetValue = 1f,
