@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -41,6 +42,7 @@ fun CommonDialog(isDialogOpen: Boolean, messaggio: String, header: String = "Mod
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color.White)
+                    .testTag("modalDialogCommon")
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -55,7 +57,10 @@ fun CommonDialog(isDialogOpen: Boolean, messaggio: String, header: String = "Mod
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(messaggio, modifier = Modifier.padding(10.dp))
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = onDismissRequest) {
+                    Button(
+                        modifier = Modifier.testTag("okButtonModal"),
+                        onClick = onDismissRequest
+                    ) {
                         Text("OK")
                     }
                 }
