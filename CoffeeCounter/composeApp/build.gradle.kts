@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -21,6 +22,9 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
     
     listOf(
@@ -40,6 +44,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -60,6 +65,19 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.cio)
             implementation(libs.kotlinx.datetime)
+            //specifica per android
+            //implementation(libs.androidx.lifecycle.viewmodel.compose)
+//            implementation(libs.androidx.lifecycle.runtime.ktx)
+        }
+
+        //dependencies per il test (no desktop)
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.assertk)
+            implementation(kotlin("test-annotations-common"))
+
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
     }
 }
@@ -74,6 +92,8 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        //per il testing
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     packaging {
         resources {
@@ -89,16 +109,24 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+//    testOptions {
+//        unitTests.includeAndroidResources = true
+//    }
 }
 
 dependencies {
     implementation(libs.transport.runtime)
-    //implementation(libs.androidx.media3.common.ktx)
     implementation(libs.protolite.well.known.types)
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.material3.android)
-    //implementation(libs.androidx.compiler)
-    //implementation(libs.androidx.databinding.compiler)
+    implementation(libs.androidx.ui.test.junit4.android)
+    testImplementation(libs.junit.junit)
+    //per test UI
+    androidTestImplementation(libs.junit)
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
+    //fine testing
     debugImplementation(compose.uiTooling)
+
 }
 
