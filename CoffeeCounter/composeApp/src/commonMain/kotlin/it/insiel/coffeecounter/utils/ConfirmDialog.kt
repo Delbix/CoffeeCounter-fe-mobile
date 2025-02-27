@@ -49,7 +49,8 @@ import androidx.compose.ui.window.Dialog
  */
 
 @Composable
-fun ConfirmDialog( isDialogOpen: Boolean, messaggio: String = "Sei sicuro?", header: String = "ModalDialog", headerColor: Color = Color.Blue,
+fun ConfirmDialog( isDialogOpen: Boolean, messaggio: String = "Sei sicuro?",
+                   header: String = "ModalDialog", headerColor: Color = Color.Blue,
                    onConfirm: () -> Unit,
                    onDismiss: () -> Unit){
     if (isDialogOpen) {
