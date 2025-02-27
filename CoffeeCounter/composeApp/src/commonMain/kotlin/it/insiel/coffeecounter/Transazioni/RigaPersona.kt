@@ -1,7 +1,6 @@
 package it.insiel.coffeecounter.Transazioni
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 
@@ -28,15 +28,15 @@ import it.insiel.coffeecounter.RichiesteServer.Persona
  *
  * **Parametri**
  * @param persona [Persona] = persona oggetto di questa riga
- * @param valoriPadre [ValoriTabellaTransazioni] = valori passati da TabellaTransazioni
+ * @param valoriPadre [TransazioniUI] = valori passati da TabellaTransazioni
  * @param manuale [Boolean] = abilita scelta manuale di chi paga
  * **Lambda**
  * @param onMyEvent = evento che aggiorna i valori di ValoriTabellaTransazioni su chi chiama questo elemento
  */
 
 @Composable
-fun RigaPersona(persona: Persona, valoriPadre: ValoriTabellaTransazioni, manuale: Boolean,
-                onMyEvent: (ValoriTabellaTransazioni) -> Unit ){
+fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
+                onMyEvent: (TransazioniUI) -> Unit ){
     //fa in modo che si aggiorni la riga
     var partecipa by remember { mutableStateOf(persona.checked) }
     var ratePersona: Double = 0.0 //per evitare un errore di divisione per 0
@@ -45,14 +45,15 @@ fun RigaPersona(persona: Persona, valoriPadre: ValoriTabellaTransazioni, manuale
     var paga by remember { mutableStateOf( persona.id == valori.transazione.pagata_da?.id) }
     var rate = valori.rate
     //per poter modificare la transazione
-    var transazioneLocal = valori.transazione
+    var pagata_da: Persona? = valori.transazione.pagata_da
+    var partecipanti: MutableList<Persona> = valori.transazione.partecipanti //è var perchè voglio usare la funzione add()
 
     if ( persona.ha_partecipato != 0 ){
         ratePersona = persona.ha_pagato.toDouble() / persona.ha_partecipato.toDouble()
     }
+    //se la persona partecipa ed il suo rate è < di quello attuale ==> aggiorna valori
     if ( partecipa && ratePersona < rate ){
-        transazioneLocal.pagata_da = persona
-        valori = valori.copy( rate = ratePersona, transazione = transazioneLocal, persone = valori.persone )
+        valori = valori.copy( rate = ratePersona, transazione = valori.transazione.copy( pagata_da = persona ) )
         onMyEvent(valori)
     }
 
@@ -62,8 +63,18 @@ fun RigaPersona(persona: Persona, valoriPadre: ValoriTabellaTransazioni, manuale
         .background(backgroundColor, RoundedCornerShape(4.dp)),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Text(text = persona.id.toString(), modifier = Modifier.weight(1f).padding(4.dp).align(Alignment.CenterVertically))
-        Text(text = "${persona.nome} ${persona.cognome} - $ratePersona", modifier = Modifier.weight(3f).align(Alignment.CenterVertically))
+        Text(
+            text = persona.id.toString(),
+            modifier = Modifier.weight(1f)
+                .padding(4.dp)
+                .align(Alignment.CenterVertically)
+                .testTag( persona.id.toString() )
+        )
+        Text(text = "${persona.nome} ${persona.cognome} - $ratePersona",
+            modifier = Modifier.weight(3f)
+                .align(Alignment.CenterVertically)
+                .testTag("${persona.nome}${persona.cognome}")
+        )
         //Checkbox di partecipazione
         Checkbox(
             checked = partecipa,
@@ -72,30 +83,29 @@ fun RigaPersona(persona: Persona, valoriPadre: ValoriTabellaTransazioni, manuale
                 partecipa = check
                 persona.checked = check
                 if (partecipa) {
-                    transazioneLocal.partecipanti.add( persona )
+                    partecipanti.add( persona )
 
                     if ( ratePersona < rate ) {
                         if ( !manuale ) { //vado a settare chi paga solo se sono in modalità automatica
-                            transazioneLocal.pagata_da = persona
+                            pagata_da = persona
                         }
                         valori = valori.copy(
-                            transazione = transazioneLocal,
-                            rate = ratePersona,
-                            persone = valori.persone
+                            transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ),
+                            rate = ratePersona
                         )
                         backgroundColor = Color.Green
                     } else {
-                        valori = valori.copy( transazione = transazioneLocal, persone = valori.persone )
+                        valori = valori.copy( transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ), persone = valori.persone )
                     }
                     onMyEvent( valori )
                 } else {
-                    transazioneLocal.partecipanti.remove( persona )
-                    if ( transazioneLocal.pagata_da == persona ){
-                        transazioneLocal.pagata_da = null
+                    partecipanti.remove( persona )
+                    if ( pagata_da == persona ){
+                        pagata_da = null
                         //imposto un rate assurdo per forzare i ricalcoli
                         rate = 2.0
                     }
-                    valori = valori.copy( transazione = transazioneLocal, rate = rate )
+                    valori = valori.copy( transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ), rate = rate )
                     onMyEvent(valori)
                 }
             },
@@ -112,12 +122,12 @@ fun RigaPersona(persona: Persona, valoriPadre: ValoriTabellaTransazioni, manuale
                     }
                     paga = check
                     if (paga) {
-                        transazioneLocal.pagata_da = persona
-                        valori = valori.copy( transazione = transazioneLocal )
+                        pagata_da = persona
+                        valori = valori.copy( transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ) )
                         onMyEvent(valori)
                     } else {
-                        transazioneLocal.pagata_da = null
-                        valori = valori.copy( transazione = transazioneLocal )
+                        pagata_da = pagata_da
+                        valori = valori.copy( transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ) )
                         onMyEvent(valori)
                     }
                 },

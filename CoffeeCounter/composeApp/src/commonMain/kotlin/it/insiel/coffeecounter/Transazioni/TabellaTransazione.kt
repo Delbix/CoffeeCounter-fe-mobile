@@ -1,7 +1,6 @@
 package it.insiel.coffeecounter.Transazioni
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.ktor.client.statement.bodyAsText
@@ -40,7 +40,7 @@ import kotlinx.serialization.json.Json
  * @required essere chiamato da VistaTransazioniNew
  *
  * **Parametri**
- * @param valoriPadre [ValoriTabellaTransazioni] = valori passati da VistaTransazioniNew
+ * @param valoriPadre [TransazioniUI] = valori passati da VistaTransazioniNew
  * @param scope [CoroutineScope] = scope di VistaTransazioniNew
  * @param manuale [Boolean] = abilita scelta manuale di chi paga
  * **Lambda**
@@ -52,8 +52,8 @@ import kotlinx.serialization.json.Json
  */
 
 @Composable
-fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineScope, manuale: Boolean,
-                       onMyEvent: (ValoriTabellaTransazioni) -> Unit, onCloseModal: () -> Unit){
+fun TabellaTransazione(valoriPadre: TransazioniUI, scope: CoroutineScope, manuale: Boolean,
+                       onMyEvent: (TransazioniUI) -> Unit, onCloseModal: () -> Unit){
     var valori by remember { mutableStateOf( valoriPadre.copy() ) }
     valori = valoriPadre.copy() //TODO se lo tolgo non mi visualizza nulla nella tabella?!?
     //parametri per la finestra modale
@@ -81,15 +81,19 @@ fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineSc
                     modifier = Modifier.fillMaxWidth().padding(3.dp)
                         .background(Color.Blue, RoundedCornerShape(4.dp))
                 ) {
-                    Text(text = "ID", modifier = Modifier.weight(1f),
+                    Text(text = "ID",
+                        modifier = Modifier.weight(1f).testTag("headerID"),
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = "Nome Cognome", modifier = Modifier.weight(3f),
+                    Text(text = "Nome Cognome",
+                        modifier = Modifier.weight(3f).testTag("headerNome"),
                         fontWeight = FontWeight.Bold)
-                    Text(text = "Partecipa", modifier = Modifier.weight(1f),
+                    Text(text = "Partecipa",
+                        modifier = Modifier.weight(1f).testTag("headerPartecipa"),
                         fontWeight = FontWeight.Bold)
                     if ( manuale ){
-                        Text(text = "Paga", modifier = Modifier.weight(1f),
+                        Text(text = "Paga",
+                            modifier = Modifier.weight(1f).testTag("headerPaga"),
                             fontWeight = FontWeight.Bold)
                     }
                 }
@@ -104,6 +108,7 @@ fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineSc
 
         //bottone di invio dei dati
         Button(
+            modifier = Modifier.testTag("inviaButton"),
             onClick = {
                 scope.launch {
                     try {
@@ -115,8 +120,9 @@ fun TabellaTransazione(valoriPadre: ValoriTabellaTransazioni, scope: CoroutineSc
                             isDialogOpen.value = true
                         } else {
                             //transazione pronta all'invio, quindi facciamo il tentativo
-                            valori.transazione.data = Clock.System.now()
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                            valori = valori.copy( transazione = valori.transazione.copy( data = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString() ))
+                            //valori.transazione.data = Clock.System.now()
+                                //.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
                             val response = sendTransazione(valori.transazione)
                             val transazioneResponse: Transazione = Json.decodeFromString<Transazione>(response.bodyAsText())
                             var partecipanti :String = formattaPartecipanti( transazioneResponse.partecipanti )
