@@ -1,6 +1,5 @@
 package it.insiel.coffeecounter.Statistiche
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.Result
 import it.insiel.coffeecounter.RichiesteServer.fetchPersonas
-import it.insiel.coffeecounter.Transazioni.ValoriTabellaTransazioni
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
