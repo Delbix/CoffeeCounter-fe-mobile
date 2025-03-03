@@ -10,10 +10,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.ktor.client.statement.bodyAsText
 import it.insiel.coffeecounter.RichiesteServer.Persona
-import it.insiel.coffeecounter.RichiesteServer.sendPersona
+import it.insiel.coffeecounter.RichiesteServer.InvioDati
 import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.launch
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.testTag
 import kotlinx.serialization.json.Json
 
 /**
@@ -49,17 +50,21 @@ fun VistaAddUser( onCloseModal: () -> Unit ) {
         Text("Aggiungi un utente al database")
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
+            modifier = Modifier.testTag("nome"),
             value = nome,
             onValueChange = { nome = it },
             label = { Text("Nome ") }
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
+            modifier = Modifier.testTag("cognome"),
             value = cognome,
             onValueChange = { cognome = it },
             label = { Text("Cognome ") }
         )
-        Button(onClick = {
+        Button(
+            modifier = Modifier.testTag("addUser"),
+            onClick = {
             scope.launch {
                 if ( nome == "" ){
                     errorMsg = "Il campo Nome deve essere valorizzato"
@@ -78,7 +83,7 @@ fun VistaAddUser( onCloseModal: () -> Unit ) {
                 }else{
                     try {
                         val persona = Persona(0, nome, cognome, 0, 0, false)
-                        val response = sendPersona(persona)
+                        val response = InvioDati.sendPersona(persona)
                         val personaResponse: Persona = Json.decodeFromString<Persona>(response.bodyAsText())
                         dialogHeader = "Dati inviati con successo"
                         dialogHeaderColor = Color.Blue
@@ -97,7 +102,7 @@ fun VistaAddUser( onCloseModal: () -> Unit ) {
         }
 
         if (errorMsg != "") {
-            Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f))
+            Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f).testTag("error"))
         }
 
         CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
