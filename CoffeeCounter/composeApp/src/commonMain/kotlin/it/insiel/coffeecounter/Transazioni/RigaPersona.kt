@@ -109,7 +109,7 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
                     onMyEvent(valori)
                 }
             },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).testTag("check${persona.id}")
         )
         if ( manuale ) {
             //checkbox di pagamento (visibile solo se siamo in modalità manuale)

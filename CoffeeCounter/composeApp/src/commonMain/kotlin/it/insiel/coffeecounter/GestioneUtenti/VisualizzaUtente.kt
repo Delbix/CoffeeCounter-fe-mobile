@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.ktor.client.statement.bodyAsText
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.InvioDati
 import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
@@ -41,6 +40,7 @@ import kotlinx.coroutines.launch
  *
  * **Parametri**
  * @param persona [Persona] = utente oggetto di visualizzazione
+ * @param invioDati [InvioDatiService] = oggetto utilizzato per l'invio di dati al server
  * **Lambda**
  * @param onCloseModal = viene gestito da App.kt per cambiare la vista
  */

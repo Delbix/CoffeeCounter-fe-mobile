@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.ktor.client.statement.bodyAsText
 import it.insiel.coffeecounter.RichiesteServer.*
 import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +29,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.json.Json
 
 /**
  * MODULO
@@ -41,6 +39,7 @@ import kotlinx.serialization.json.Json
  * @param valoriPadre [TransazioniUI] = valori passati da VistaTransazioniNew
  * @param scope [CoroutineScope] = scope di VistaTransazioniNew
  * @param manuale [Boolean] = abilita scelta manuale di chi paga
+ * @param invioDati [InvioDatiService] = oggetto utilizzato per l'invio di dati al server
  * **Lambda**
  * @param onMyEvent = evento che aggiorna i valori di ValoriTabellaTransazioni nel chiamante
  * @param onCloseModal = evento generato dalla chiusura della finestra modale
@@ -154,7 +153,7 @@ fun TabellaTransazione(valoriPadre: TransazioniUI,
 
 /**
  * Funzione che crea una lista in formato String con nome e cognome
- * @param MutableList<Persona> -> elenco dei partecipanti alla transazione
+ * @param participanti MutableList<Persona> -> elenco dei partecipanti alla transazione
  * @return String -> elenco numerato dei partecipanti
  */
 fun formattaPartecipanti(partecipanti: MutableList<Persona>): String {

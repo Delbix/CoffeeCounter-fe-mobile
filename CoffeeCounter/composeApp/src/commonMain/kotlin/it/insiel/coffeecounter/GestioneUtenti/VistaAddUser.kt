@@ -21,7 +21,7 @@ import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
  * gestisce l'inserimento di un nuovo utente
  *
  * **Parametri**
- *
+ * @param invioDati [InvioDatiService] = oggetto utilizzato per l'invio di dati al server
  * **Lambda**
  * @param onCloseModal = viene gestito da App.kt per cambiare la vista
  */
