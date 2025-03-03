@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -60,6 +61,7 @@ fun ConfirmDialog( isDialogOpen: Boolean, messaggio: String = "Sei sicuro?",
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color.White)
+                    .testTag("modalDialogConfirm")
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -78,10 +80,16 @@ fun ConfirmDialog( isDialogOpen: Boolean, messaggio: String = "Sei sicuro?",
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(messaggio, modifier = Modifier.padding(10.dp))
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = onConfirm) {
+                    Button(
+                        modifier = Modifier.testTag("conferma"),
+                        onClick = onConfirm
+                    ) {
                         Text("Conferma")
                     }
-                    Button(onClick = onDismiss) {
+                    Button(
+                        modifier = Modifier.testTag("annulla"),
+                        onClick = onDismiss
+                    ) {
                         Text("Annulla")
                     }
                 }

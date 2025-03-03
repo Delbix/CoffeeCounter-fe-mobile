@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.InvioDati
@@ -83,17 +84,21 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
         Text("Modifica utente")
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
+            modifier = Modifier.testTag("nome"),
             value = nome,
             onValueChange = { nome = it },
             label = { Text("Nome ") }
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
+            modifier = Modifier.testTag("cognome"),
             value = cognome,
             onValueChange = { cognome = it },
             label = { Text("Nome ") }
         )
-        Button(onClick = {
+        Button(
+            modifier = Modifier.testTag("modifica"),
+            onClick = {
             scope.launch {
                 if (nome == "") {
                     errorMsg = "Il campo Nome deve essere valorizzato"
@@ -130,14 +135,16 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
             Text("Salva modifiche")
         }
 
-        Button(onClick = {
+        Button(
+            modifier = Modifier.testTag("elimina"),
+            onClick = {
             isDialogOpenConfirm.value = true
         }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
             Text("Elimina" )
         }
 
         if (errorMsg != "") {
-            Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f) )
+            Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f).testTag("error") )
         }
 
         CommonDialog(isDialogOpenCommon.value, dialogMessage, dialogHeader, dialogHeaderColor) {
