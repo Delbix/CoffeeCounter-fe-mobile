@@ -29,12 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.ktor.client.statement.bodyAsText
 import it.insiel.coffeecounter.RichiesteServer.Persona
-import it.insiel.coffeecounter.RichiesteServer.eliminaPersona
-import it.insiel.coffeecounter.RichiesteServer.sendPersona
+import it.insiel.coffeecounter.RichiesteServer.InvioDati
+import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
 import it.insiel.coffeecounter.utils.CommonDialog
 import it.insiel.coffeecounter.utils.ConfirmDialog
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 
 /**
  * VISTA
@@ -47,7 +46,7 @@ import kotlinx.serialization.json.Json
  */
 
 @Composable
-fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
+fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati, onCloseModal: () -> Unit ){
     var nome by remember { mutableStateOf(persona.nome ) }
     var cognome by remember { mutableStateOf(persona.cognome ) }
     var errorMsg by remember { mutableStateOf( "" ) }
@@ -113,9 +112,7 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
                                 persona.ha_partecipato,
                                 false
                             )
-                            val response = sendPersona(personaMod)
-                            val personaResponse: Persona =
-                                Json.decodeFromString<Persona>(response.bodyAsText())
+                            val personaResponse:Persona = invioDati.sendPersona(personaMod)
                             dialogHeader = "Dati modificati con successo:"
                             dialogHeaderColor = Color.Blue
                             dialogMessage =
@@ -156,8 +153,8 @@ fun VisualizzaUtente( persona: Persona, onCloseModal: () -> Unit ){
             onConfirm = {
                 scope.launch {
                     try {
-                        val response = eliminaPersona(persona)
-                        if ( response.bodyAsText() == "true" ){
+                        val response = invioDati.eliminaPersona(persona)
+                        if ( response == "true" ){
                             dialogHeader = "Eliminazione eseguita con successo!"
                             dialogHeaderColor = Color.Blue
                             dialogMessage = "${persona.nome} ${persona.cognome} è stato eliminato!"

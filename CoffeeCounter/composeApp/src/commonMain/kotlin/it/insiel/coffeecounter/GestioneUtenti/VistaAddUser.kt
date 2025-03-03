@@ -8,14 +8,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.ktor.client.statement.bodyAsText
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.InvioDati
 import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.launch
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.testTag
-import kotlinx.serialization.json.Json
+import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
 
 /**
  * VISTA
@@ -28,7 +27,7 @@ import kotlinx.serialization.json.Json
  */
 
 @Composable
-fun VistaAddUser( onCloseModal: () -> Unit ) {
+fun VistaAddUser( invioDati: InvioDatiService = InvioDati, onCloseModal: () -> Unit ) {
     var nome by remember { mutableStateOf("") }
     var cognome by remember { mutableStateOf("") }
     var errorMsg by remember { mutableStateOf( "" ) }
@@ -83,8 +82,7 @@ fun VistaAddUser( onCloseModal: () -> Unit ) {
                 }else{
                     try {
                         val persona = Persona(0, nome, cognome, 0, 0, false)
-                        val response = InvioDati.sendPersona(persona)
-                        val personaResponse: Persona = Json.decodeFromString<Persona>(response.bodyAsText())
+                        val personaResponse:Persona = invioDati.sendPersona(persona)
                         dialogHeader = "Dati inviati con successo"
                         dialogHeaderColor = Color.Blue
                         dialogMessage = "Riepilogo: \nID:${personaResponse.id} \nNome:${personaResponse.nome} \nCognome:${personaResponse.cognome}"

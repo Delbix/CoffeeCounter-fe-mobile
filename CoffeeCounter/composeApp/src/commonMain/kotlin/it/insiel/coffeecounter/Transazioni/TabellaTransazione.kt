@@ -23,9 +23,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.ktor.client.statement.bodyAsText
-import it.insiel.coffeecounter.RichiesteServer.Persona
-import it.insiel.coffeecounter.RichiesteServer.Transazione
-import it.insiel.coffeecounter.RichiesteServer.sendTransazione
+import it.insiel.coffeecounter.RichiesteServer.*
 import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -52,7 +50,10 @@ import kotlinx.serialization.json.Json
  */
 
 @Composable
-fun TabellaTransazione(valoriPadre: TransazioniUI, scope: CoroutineScope, manuale: Boolean,
+fun TabellaTransazione(valoriPadre: TransazioniUI,
+                       scope: CoroutineScope,
+                       manuale: Boolean,
+                       invioDati: InvioDatiService = InvioDati,
                        onMyEvent: (TransazioniUI) -> Unit, onCloseModal: () -> Unit){
     var valori by remember { mutableStateOf( valoriPadre.copy() ) }
     valori = valoriPadre.copy() //TODO se lo tolgo non mi visualizza nulla nella tabella?!?
@@ -121,10 +122,7 @@ fun TabellaTransazione(valoriPadre: TransazioniUI, scope: CoroutineScope, manual
                         } else {
                             //transazione pronta all'invio, quindi facciamo il tentativo
                             valori = valori.copy( transazione = valori.transazione.copy( data = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString() ))
-                            //valori.transazione.data = Clock.System.now()
-                                //.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-                            val response = sendTransazione(valori.transazione)
-                            val transazioneResponse: Transazione = Json.decodeFromString<Transazione>(response.bodyAsText())
+                            val transazioneResponse:Transazione = invioDati.sendTransazione(valori.transazione)
                             var partecipanti :String = formattaPartecipanti( transazioneResponse.partecipanti )
                             dialogHeader = "Dati inviati con successo:"
                             dialogHeaderColor = Color.Blue
@@ -151,6 +149,7 @@ fun TabellaTransazione(valoriPadre: TransazioniUI, scope: CoroutineScope, manual
         }
     }
 }
+
 
 
 /**
