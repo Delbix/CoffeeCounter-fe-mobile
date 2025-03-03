@@ -6,7 +6,6 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import io.mockk.coEvery
 import io.mockk.mockk
-import it.insiel.coffeecounter.GestioneUtenti.VistaAddUser
 import it.insiel.coffeecounter.GestioneUtenti.VisualizzaUtente
 import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
 import it.insiel.coffeecounter.RichiesteServer.Persona
