@@ -67,13 +67,11 @@ fun TabellaTransazione( scope: CoroutineScope,
     //Al load della pagina -> lo fa una volta sola
     LaunchedEffect(Unit) {
         scope.launch {
-            when (val result = richiesteDati.fetchPersonas()) {
-                is Result.Success -> {
-                    valori = TransazioniUI(  result.data )
-                }
-                is Result.Error -> {
-                    valori = TransazioniUI(  emptyList(), errorMessage = result.message )
-                }
+            try {
+                val result = richiesteDati.fetchPersonas()
+                valori = TransazioniUI( result )
+            } catch (e:Exception){
+                valori = TransazioniUI( emptyList(), errorMessage = e.message )
             }
         }
     }

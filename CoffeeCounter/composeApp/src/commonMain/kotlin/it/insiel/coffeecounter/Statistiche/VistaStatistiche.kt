@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
-import it.insiel.coffeecounter.RichiesteServer.Result
 import it.insiel.coffeecounter.RichiesteServer.Richiesta
 import it.insiel.coffeecounter.RichiesteServer.RichiestaDatiService
 import kotlinx.coroutines.CoroutineScope
@@ -50,13 +49,14 @@ fun vistaStatistiche( richiestaDati: RichiestaDatiService = Richiesta) {
     //Al load della pagina
     LaunchedEffect(Unit) {
         scope.launch {
-            when (val result = richiestaDati.fetchPersonas()) {
-                is Result.Success -> {
-                    persone = result.data
-                }
-                is Result.Error -> {
-                     //TODO handle result.message
-                }
+            try {
+                val result = richiestaDati.fetchPersonas()
+                persone = result
+            } catch (e:Exception){
+                //TODO handle e.message
+//                dialogHeader = "ERRORE"
+//                dialogMessage = "Errore di ricezione dei dati: \n${e.message} "
+//                isDialogOpen.value = true
             }
         }
     }

@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
-import it.insiel.coffeecounter.RichiesteServer.Result
 import it.insiel.coffeecounter.RichiesteServer.Richiesta
 import it.insiel.coffeecounter.RichiesteServer.RichiestaDatiService
 import it.insiel.coffeecounter.utils.CommonDialog
@@ -56,15 +55,13 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
 
     LaunchedEffect(Unit) {
         scope.launch {
-            when (val result = richiestaDati.fetchPersonas()) {
-                is Result.Success -> {
-                    persone = result.data
-                }
-                is Result.Error -> {
-                    dialogHeader = "ERRORE"
-                    dialogMessage = "Errore di ricezione dei dati: \n${result.message} "
-                    isDialogOpen.value = true
-                }
+            try {
+                val result = richiestaDati.fetchPersonas()
+                persone = result
+            } catch (e:Exception){
+                dialogHeader = "ERRORE"
+                dialogMessage = "Errore di ricezione dei dati: \n${e.message} "
+                isDialogOpen.value = true
             }
         }
     }

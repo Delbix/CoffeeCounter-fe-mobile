@@ -15,15 +15,10 @@ object Richiesta: RichiestaDatiService {
     /**
      * Chiama il server per chiedere l'elenco di persone salvate nel database
      */
-    override suspend fun fetchPersonas(): Result {
-        return try {
+    override suspend fun fetchPersonas(): List<Persona> {
             val client = createHttpClient()
             val response: HttpResponse = client.get("${AppInit.API_URL}/angular/transazione")
             val responseBody: String = response.bodyAsText()
-            val personas = Json.decodeFromString<List<Persona>>(responseBody)
-            Result.Success(personas)
-        } catch (e: Exception) {
-            Result.Error("Errore nella connessione al server: ${e.message}")
-        }
+            return Json.decodeFromString<List<Persona>>(responseBody)
     }
 }
