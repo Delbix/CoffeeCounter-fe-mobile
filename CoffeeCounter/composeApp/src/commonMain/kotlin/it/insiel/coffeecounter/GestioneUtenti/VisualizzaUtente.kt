@@ -125,7 +125,7 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
                         } catch (e: Exception) {
                             dialogHeader = "Errore nell'invio dei dati:"
                             dialogHeaderColor = Color.Red
-                            dialogMessage = e.message!!
+                            dialogMessage = "${e.message}"
                         }
                         isDialogOpenCommon.value = true
                     }

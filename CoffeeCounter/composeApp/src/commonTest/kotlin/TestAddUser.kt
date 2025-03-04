@@ -1,5 +1,6 @@
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
@@ -70,6 +71,37 @@ class TestAddUser {
         onNodeWithTag("error").assertDoesNotExist()
         //mi aspetto che ci sia la modal aperta
         onNodeWithTag( "modalDialogCommon" ).assertExists()
+        onNodeWithTag( "okButtonModal" ).performClick()
+        //verifico che la modal si chiuda correttamente
+        assertEquals("cambioContesto", closeModal)
+    }
+
+    /**
+     * Test di invio dati con mock con exception
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testInvioDatiErrore() = runComposeUiTest {
+        val invioDatiMock = mockk<InvioDatiService> {
+            coEvery { sendPersona(any()) } throws RuntimeException("Qualcosa è andato storto")
+        }
+        var closeModal:String = ""
+
+        setContent {
+            VistaAddUser(invioDatiMock, onCloseModal = { closeModal = "cambioContesto" })
+        }
+
+        //inserisco un nome utente
+        onNodeWithTag("nome").performTextInput("Fede")
+        onNodeWithTag("addUser").assertExists()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
+        //clicco su Aggiungi
+        onNodeWithTag("addUser").performClick()
+        onNodeWithTag("error").assertDoesNotExist()
+        //mi aspetto che ci sia la modal aperta
+        onNodeWithTag( "modalDialogCommon" ).assertExists()
+        onNodeWithText("Qualcosa è andato storto \nRiprova!").assertExists() //verifico che l'eccezione sia messa a video
         onNodeWithTag( "okButtonModal" ).performClick()
         //verifico che la modal si chiuda correttamente
         assertEquals("cambioContesto", closeModal)

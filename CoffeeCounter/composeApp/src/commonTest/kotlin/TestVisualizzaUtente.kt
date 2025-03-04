@@ -49,7 +49,7 @@ class TestVisualizzaUtente {
     }
 
     /**
-     * Testo che modifciando l'utente e mockkando la risposta del server mi funzioni correttamente
+     * Testo che modificando l'utente e mockkando la risposta del server mi funzioni correttamente
      */
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -73,6 +73,38 @@ class TestVisualizzaUtente {
         onNodeWithTag("modalDialogCommon").assertExists()
         onNodeWithTag("error").assertDoesNotExist()
         onNodeWithTag( "modalDialogCommon" ).assertExists()
+        //clicco per chiudere la modal
+        onNodeWithTag( "okButtonModal" ).performClick()
+        //verifico che la modal si chiuda correttamente
+        assertEquals("cambioContesto", closeModal)
+
+    }
+
+    /**
+     * Testo che modificando l'utente e mockkando la risposta del server(error response) mi funzioni correttamente
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testInterazioneModificaErrore() = runComposeUiTest {
+        val invioDatiMock = mockk<InvioDatiService> {
+            coEvery { sendPersona(any()) } throws RuntimeException("c'è stato un problema")
+        }
+        var closeModal:String = ""
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+        setContent {
+            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+        }
+
+        //Modifico il nome
+        onNodeWithTag("nome").performTextInput("Pippo")
+        onNodeWithTag("modifica").assertExists()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
+        //clicco su modifica
+        onNodeWithTag("modifica").performClick()
+        onNodeWithTag("modalDialogCommon").assertExists()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithText("c'è stato un problema").assertExists()
         //clicco per chiudere la modal
         onNodeWithTag( "okButtonModal" ).performClick()
         //verifico che la modal si chiuda correttamente
@@ -107,6 +139,74 @@ class TestVisualizzaUtente {
         //clicco per chiudere la modal
         onNodeWithTag( "conferma" ).performClick()
         onNodeWithTag("modalDialogCommon").assertExists()
+        onNodeWithTag( "okButtonModal" ).performClick()
+        //verifico che la modal si chiuda correttamente
+        assertEquals("cambioContesto", closeModal)
+
+    }
+
+    /**
+     * Testo che cliccando su elimina, mi si apra la procedura di eliminazione (ma qualcosa va storto)
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testInterazioneEliminaErrore() = runComposeUiTest {
+        val invioDatiMock = mockk<InvioDatiService> {
+            coEvery { eliminaPersona(any()) } returns "false" //qualcosa è andato storto
+        }
+        var closeModal:String = ""
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+        setContent {
+            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+        }
+
+        //Modifico il nome
+        onNodeWithTag("nome").performTextInput("Pippo")
+        onNodeWithTag("elimina").assertExists()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
+        //clicco su modifica
+        onNodeWithTag("elimina").performClick()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithTag( "modalDialogConfirm" ).assertExists()
+        //clicco per chiudere la modal
+        onNodeWithTag( "conferma" ).performClick()
+        onNodeWithTag("modalDialogCommon").assertExists()
+        onNodeWithText("C'è stato un errore durante l'eliminazione, riprova!").assertExists()
+        onNodeWithTag( "okButtonModal" ).performClick()
+        //verifico che la modal si chiuda correttamente
+        assertEquals("cambioContesto", closeModal)
+
+    }
+
+    /**
+     * Testo che cliccando su elimina, mi si apra la procedura di eliminazione (ma il server non risponde)
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testInterazioneEliminaErrore2() = runComposeUiTest {
+        val invioDatiMock = mockk<InvioDatiService> {
+            coEvery { eliminaPersona(any()) } throws RuntimeException("c'è stato un problema") //exception
+        }
+        var closeModal:String = ""
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+        setContent {
+            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+        }
+
+        //Modifico il nome
+        onNodeWithTag("nome").performTextInput("Pippo")
+        onNodeWithTag("elimina").assertExists()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
+        //clicco su modifica
+        onNodeWithTag("elimina").performClick()
+        onNodeWithTag("error").assertDoesNotExist()
+        onNodeWithTag( "modalDialogConfirm" ).assertExists()
+        //clicco per chiudere la modal
+        onNodeWithTag( "conferma" ).performClick()
+        onNodeWithTag("modalDialogCommon").assertExists()
+        onNodeWithText("c'è stato un problema").assertExists()
         onNodeWithTag( "okButtonModal" ).performClick()
         //verifico che la modal si chiuda correttamente
         assertEquals("cambioContesto", closeModal)
