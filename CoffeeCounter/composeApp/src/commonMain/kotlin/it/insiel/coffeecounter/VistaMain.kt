@@ -50,6 +50,7 @@ fun VistaMain(onButtonAutomaticoClick: () -> Unit, onButtonManualeClick: () -> U
                 .width(200.dp)
                 .height(100.dp)
                 .padding(8.dp)
+                .testTag("manuale")
         ) {
             Text("Caffè manuale")
         }
