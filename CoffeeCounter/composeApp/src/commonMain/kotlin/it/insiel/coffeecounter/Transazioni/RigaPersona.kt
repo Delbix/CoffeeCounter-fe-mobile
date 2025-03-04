@@ -131,7 +131,7 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
                         onMyEvent(valori)
                     }
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).testTag("${persona.id}Paga")
             )
         }
     }

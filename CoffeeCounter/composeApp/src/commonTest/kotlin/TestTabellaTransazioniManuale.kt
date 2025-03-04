@@ -15,9 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
-class TestTabellaTransazioni {
-
+class TestTabellaTransazioniManuale {
 
     /**
      * Testo che la tabella venga visualizzata
@@ -26,7 +24,7 @@ class TestTabellaTransazioni {
     @Test
     fun testVisualizzazione() = runComposeUiTest{
         val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2:Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val getDatiMock = mockk<RichiestaDatiService> {
@@ -35,18 +33,21 @@ class TestTabellaTransazioni {
         setContent {
 
             val scope: CoroutineScope = rememberCoroutineScope()
-            TabellaTransazione( scope, false, richiesteDati = getDatiMock, onCloseModal = { } )
+            TabellaTransazione( scope, true, richiesteDati = getDatiMock, onCloseModal = { } )
         }
 
         //controllo che l'header della tabella siano visualizzati
         onNodeWithTag("headerID" ).assertExists()
         onNodeWithTag( "headerNome").assertExists()
         onNodeWithTag("headerPartecipa").assertExists()
-        onNodeWithTag("headerPaga").assertDoesNotExist()
+        onNodeWithTag("headerPaga").assertExists()
         //ID
         onNodeWithTag("1").assertExists()
         onNodeWithTag("2").assertExists()
         onNodeWithTag("3").assertDoesNotExist()
+        onNodeWithTag("1Paga").assertExists()
+        onNodeWithTag("2Paga").assertExists()
+        onNodeWithTag("3Paga").assertDoesNotExist()
         //Nome
         onNodeWithTag("Fede").assertExists()
         onNodeWithTag("Gatto").assertExists()
@@ -61,7 +62,7 @@ class TestTabellaTransazioni {
     fun testInterazioneErrore() = runComposeUiTest{
 
         val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2:Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val getDatiMock = mockk<RichiestaDatiService> {
@@ -70,13 +71,46 @@ class TestTabellaTransazioni {
         var closeModal: String = ""
         setContent {
             val scope: CoroutineScope = rememberCoroutineScope()
-            TabellaTransazione( scope, false, richiesteDati = getDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
+            TabellaTransazione( scope, true, richiesteDati = getDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
         }
 
         //verifico che venga visualizzata la finestra di dialogo e che alla sua chiusura venga triggerato l'evento giusto
         onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
         onNodeWithTag( "inviaButton" ).performClick()
         onNodeWithTag( "modalDialogCommon" ).assertExists()
+        onNodeWithTag( "okButtonModal" ).performClick()
+        assertEquals("cambioContesto", closeModal)
+    }
+
+    /**
+     * Testo un interazione di invio senza nessun un pagatore spuntato
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testInterazioneErrore2() = runComposeUiTest{
+
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
+        val pList:MutableList<Persona> = mutableListOf( p1, p2 )
+
+        val getDatiMock = mockk<RichiestaDatiService> {
+            coEvery { fetchPersonas() } returns pList
+        }
+        var closeModal: String = ""
+        setContent {
+            val scope: CoroutineScope = rememberCoroutineScope()
+            TabellaTransazione( scope, true, richiesteDati = getDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
+        }
+
+        //spunto i parteipanti
+        onNodeWithTag( "check1" ).assertExists()
+        onNodeWithTag( "check2" ).assertExists()
+        onNodeWithTag( "check1" ).performClick()
+        //verifico che venga visualizzata la finestra di dialogo e che alla sua chiusura venga triggerato l'evento giusto
+        onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
+        onNodeWithTag( "inviaButton" ).performClick()
+        onNodeWithTag( "modalDialogCommon" ).assertExists()
+        onNodeWithText("ERRORE nella creazione della transazione!").assertExists()
         onNodeWithTag( "okButtonModal" ).performClick()
         assertEquals("cambioContesto", closeModal)
     }
@@ -89,8 +123,8 @@ class TestTabellaTransazioni {
     fun testInterazioneSend() = runComposeUiTest{
         //mock
 
-        val p1:Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2:Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val invioDatiMock = mockk<InvioDatiService> {
@@ -104,7 +138,7 @@ class TestTabellaTransazioni {
         var closeModal: String = ""
         setContent {
             val scope: CoroutineScope = rememberCoroutineScope()
-            TabellaTransazione( scope, false, richiesteDati = getDatiMock, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
+            TabellaTransazione( scope, true, richiesteDati = getDatiMock, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
         }
 
 
@@ -113,6 +147,8 @@ class TestTabellaTransazioni {
         onNodeWithTag( "check2" ).assertExists()
         onNodeWithTag( "check1" ).performClick()
         onNodeWithTag( "check2" ).performClick()
+        onNodeWithTag( "1Paga" ).assertExists()
+        onNodeWithTag( "1Paga" ).performClick()
         //click su invio
         onNodeWithTag( "inviaButton" ).performClick()
         //verifico che il result sia quanto mi aspetto dal mock
@@ -130,8 +166,8 @@ class TestTabellaTransazioni {
     fun testInterazioneSendError() = runComposeUiTest{
         //mock
 
-        val p1:Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2:Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val invioDatiMock = mockk<InvioDatiService> {
@@ -145,7 +181,7 @@ class TestTabellaTransazioni {
         var closeModal: String = ""
         setContent {
             val scope: CoroutineScope = rememberCoroutineScope()
-            TabellaTransazione( scope, false, richiesteDati = getDatiMock, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
+            TabellaTransazione( scope, true, richiesteDati = getDatiMock, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto" } )
         }
 
 
@@ -154,6 +190,8 @@ class TestTabellaTransazioni {
         onNodeWithTag( "check2" ).assertExists()
         onNodeWithTag( "check1" ).performClick()
         onNodeWithTag( "check2" ).performClick()
+        onNodeWithTag( "1Paga" ).assertExists()
+        onNodeWithTag( "1Paga" ).performClick()
         onNodeWithTag( "modalDialogCommon" ).assertDoesNotExist()
         //click su invio
         onNodeWithTag( "inviaButton" ).performClick()
