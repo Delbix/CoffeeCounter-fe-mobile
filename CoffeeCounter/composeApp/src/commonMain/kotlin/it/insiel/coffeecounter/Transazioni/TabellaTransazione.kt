@@ -41,7 +41,6 @@ import kotlinx.datetime.toLocalDateTime
  * @param manuale [Boolean] = abilita scelta manuale di chi paga
  * @param invioDati [InvioDatiService] = oggetto utilizzato per l'invio di dati al server
  * **Lambda**
- * @param onMyEvent = evento che aggiorna i valori di ValoriTabellaTransazioni nel chiamante
  * @param onCloseModal = evento generato dalla chiusura della finestra modale
  *
  * **Funzioni ausiliarie**
@@ -53,7 +52,7 @@ fun TabellaTransazione(valoriPadre: TransazioniUI,
                        scope: CoroutineScope,
                        manuale: Boolean,
                        invioDati: InvioDatiService = InvioDati,
-                       onMyEvent: (TransazioniUI) -> Unit, onCloseModal: () -> Unit){
+                       onCloseModal: () -> Unit ){
     var valori by remember { mutableStateOf( valoriPadre.copy() ) }
     valori = valoriPadre.copy() //TODO se lo tolgo non mi visualizza nulla nella tabella?!?
     //parametri per la finestra modale
@@ -101,7 +100,6 @@ fun TabellaTransazione(valoriPadre: TransazioniUI,
             items(valori.persone) { persona ->
                 RigaPersona(persona, valori, manuale){ updatedValori ->
                     valori = updatedValori.copy()
-                    onMyEvent(valori)
                 }
             }
         }
@@ -135,7 +133,6 @@ fun TabellaTransazione(valoriPadre: TransazioniUI,
                         dialogMessage = "Errore nell'invio dei dati: \n${e.message}"
                         isDialogOpen.value = true
                     }
-                    onMyEvent(valori)
                 }
             }) {
             Text("Invia")

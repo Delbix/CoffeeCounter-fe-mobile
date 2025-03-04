@@ -62,10 +62,6 @@ fun VistaTransazioniNew( manuale: Boolean = false ,onSuccesfullySend: () -> Unit
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TabellaTransazione( valori, scope, manuale,
-            onMyEvent = {
-                newValori ->
-                valori = newValori
-            },
             onCloseModal = {
                 onSuccesfullySend()
             }
