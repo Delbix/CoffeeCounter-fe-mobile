@@ -27,7 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.Result
-import it.insiel.coffeecounter.RichiesteServer.fetchPersonas
+import it.insiel.coffeecounter.RichiesteServer.Richiesta
+import it.insiel.coffeecounter.RichiesteServer.RichiestaDatiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -41,7 +42,7 @@ import kotlinx.coroutines.launch
  */
 
 @Composable
-fun vistaStatistiche() {
+fun vistaStatistiche( richiestaDati: RichiestaDatiService = Richiesta) {
     val scope: CoroutineScope = rememberCoroutineScope()
     var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }
 
@@ -49,7 +50,7 @@ fun vistaStatistiche() {
     //Al load della pagina
     LaunchedEffect(Unit) {
         scope.launch {
-            when (val result = fetchPersonas()) {
+            when (val result = richiestaDati.fetchPersonas()) {
                 is Result.Success -> {
                     persone = result.data
                 }

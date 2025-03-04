@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import it.insiel.coffeecounter.RichiesteServer.*
 import it.insiel.coffeecounter.utils.CommonDialog
+import it.insiel.coffeecounter.utils.logMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -36,10 +38,10 @@ import kotlinx.datetime.toLocalDateTime
  * @required essere chiamato da VistaTransazioniNew
  *
  * **Parametri**
- * @param valoriPadre [TransazioniUI] = valori passati da VistaTransazioniNew
  * @param scope [CoroutineScope] = scope di VistaTransazioniNew
  * @param manuale [Boolean] = abilita scelta manuale di chi paga
  * @param invioDati [InvioDatiService] = oggetto utilizzato per l'invio di dati al server
+ * @param richiesteDati [RichiestaDatiService] = oggetto utilizzato per ricevere dati dal server
  * **Lambda**
  * @param onCloseModal = evento generato dalla chiusura della finestra modale
  *
@@ -48,18 +50,33 @@ import kotlinx.datetime.toLocalDateTime
  */
 
 @Composable
-fun TabellaTransazione(valoriPadre: TransazioniUI,
-                       scope: CoroutineScope,
-                       manuale: Boolean,
-                       invioDati: InvioDatiService = InvioDati,
-                       onCloseModal: () -> Unit ){
-    var valori by remember { mutableStateOf( valoriPadre.copy() ) }
-    valori = valoriPadre.copy() //TODO se lo tolgo non mi visualizza nulla nella tabella?!?
+fun TabellaTransazione( scope: CoroutineScope,
+                        manuale: Boolean,
+                        invioDati: InvioDatiService = InvioDati,
+                        richiesteDati: RichiestaDatiService = Richiesta,
+                        onCloseModal: () -> Unit ){
+    //logMessage("MyComposable is recomposing")
+    var valori by remember { mutableStateOf( TransazioniUI() ) }
     //parametri per la finestra modale
     var dialogHeader by remember { mutableStateOf( "" ) }
     var dialogHeaderColor by remember { mutableStateOf( Color.Blue ) }
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpen = remember { mutableStateOf(false) }
+    val persone = valori.persone
+
+    //Al load della pagina -> lo fa una volta sola
+    LaunchedEffect(Unit) {
+        scope.launch {
+            when (val result = richiesteDati.fetchPersonas()) {
+                is Result.Success -> {
+                    valori = TransazioniUI(  result.data )
+                }
+                is Result.Error -> {
+                    valori = TransazioniUI(  emptyList(), errorMessage = result.message )
+                }
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -97,7 +114,7 @@ fun TabellaTransazione(valoriPadre: TransazioniUI,
                     }
                 }
             }
-            items(valori.persone) { persona ->
+            items(persone) { persona ->
                 RigaPersona(persona, valori, manuale){ updatedValori ->
                     valori = updatedValori.copy()
                 }

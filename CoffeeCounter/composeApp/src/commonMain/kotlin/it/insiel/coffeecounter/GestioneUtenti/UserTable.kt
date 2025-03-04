@@ -24,7 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.Result
-import it.insiel.coffeecounter.RichiesteServer.fetchPersonas
+import it.insiel.coffeecounter.RichiesteServer.Richiesta
+import it.insiel.coffeecounter.RichiesteServer.RichiestaDatiService
 import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -35,14 +36,14 @@ import kotlinx.coroutines.launch
  * @required essere chimato da VistaUtenti
  *
  * **Parametri**
- *
+ * @param richiestaDati [RichiestaDatiService]
  * **Lambda**
  * @param onVisualizzaUtente = per cambiare la vista per la visualizzazione di un utente specifico
  * @param onErrorDetected = per cambiare la vista in caso di errore
  */
 
 @Composable
-fun UserTable(onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit ) {
+fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit ) {
 
     //varibili utilizzate localmente
     var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }
@@ -55,7 +56,7 @@ fun UserTable(onVisualizzaUtente: (Persona) -> Unit, onErrorDetected: () -> Unit
 
     LaunchedEffect(Unit) {
         scope.launch {
-            when (val result = fetchPersonas()) {
+            when (val result = richiestaDati.fetchPersonas()) {
                 is Result.Success -> {
                     persone = result.data
                 }
