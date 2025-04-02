@@ -65,15 +65,20 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.cio)
             implementation(libs.kotlinx.datetime)
+            implementation("co.touchlab:kermit:1.0.0")
             //specifica per android
             //implementation(libs.androidx.lifecycle.viewmodel.compose)
 //            implementation(libs.androidx.lifecycle.runtime.ktx)
         }
 
+
         //dependencies per il test (no desktop)
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.assertk)
+            //implementation(libs.mockk)
+            implementation(libs.mockk.android)
+            implementation(libs.ktor.client.mock)
             implementation(kotlin("test-annotations-common"))
 
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)

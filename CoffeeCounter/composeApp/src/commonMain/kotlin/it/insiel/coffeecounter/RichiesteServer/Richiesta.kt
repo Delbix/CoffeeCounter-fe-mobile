@@ -17,7 +17,7 @@ object Richiesta: RichiestaDatiService {
      */
     override suspend fun fetchPersonas(): List<Persona> {
             val client = createHttpClient()
-            val response: HttpResponse = client.get("${AppInit.API_URL}/angular/transazione")
+            val response: HttpResponse = client.post("${AppInit.API_URL}/angular/transazione")
             val responseBody: String = response.bodyAsText()
             return Json.decodeFromString<List<Persona>>(responseBody)
     }

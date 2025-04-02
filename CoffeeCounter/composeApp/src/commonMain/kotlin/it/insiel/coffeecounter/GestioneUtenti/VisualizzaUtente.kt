@@ -118,6 +118,9 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
                                 false
                             )
                             val personaResponse:Persona = invioDati.sendPersona(personaMod)
+                            if ( personaResponse.id == -2 ){
+                                throw Exception( "Non è possibile rinominare questa persona con un nome già presente in archivio! \nLa persona ${personaResponse.nome} ${personaResponse.cognome} è già presente nel database \n" )
+                            }
                             dialogHeader = "Dati modificati con successo:"
                             dialogHeaderColor = Color.Blue
                             dialogMessage =

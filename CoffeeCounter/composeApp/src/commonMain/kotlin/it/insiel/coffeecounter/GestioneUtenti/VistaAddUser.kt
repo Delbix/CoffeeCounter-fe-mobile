@@ -83,6 +83,9 @@ fun VistaAddUser( invioDati: InvioDatiService = InvioDati, onCloseModal: () -> U
                     try {
                         val persona = Persona(0, nome, cognome, 0, 0, false)
                         val personaResponse:Persona = invioDati.sendPersona(persona)
+                        if ( personaResponse.id == -2 ){
+                            throw Exception( "La persona ${personaResponse.nome} ${personaResponse.cognome} è già presente nel database \n" )
+                        }
                         dialogHeader = "Dati inviati con successo"
                         dialogHeaderColor = Color.Blue
                         dialogMessage = "Riepilogo: \nID:${personaResponse.id} \nNome:${personaResponse.nome} \nCognome:${personaResponse.cognome}"
