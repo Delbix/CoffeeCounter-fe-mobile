@@ -4,5 +4,5 @@ package it.insiel.coffeecounter
  * Costanti da utilizzare all'interno dell'app
  */
 object AppInit {
-    const val API_URL = "http://192.168.1.46:8080"
+    const val API_URL = "https://grigliatedadelbo.altervista.org/CoffeeCounter-be" //"http://192.168.56.1:8080" "http://grigliatedadelbo.altervista.org/CoffeeCounter-be"
 }
