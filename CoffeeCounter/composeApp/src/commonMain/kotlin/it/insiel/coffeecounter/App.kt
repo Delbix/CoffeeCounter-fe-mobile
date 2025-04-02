@@ -18,6 +18,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import it.insiel.coffeecounter.GestioneUtenti.VistaUtenti
 import it.insiel.coffeecounter.GestioneUtenti.VisualizzaUtente
+import it.insiel.coffeecounter.InformazioniApp.VistaInfo
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.Statistiche.vistaStatistiche
 
@@ -54,6 +55,10 @@ fun App() {
                 onStatisticsClick = {
                     scope.launch { drawerState.close() }
                     currentView = "statistiche"
+                },
+                oninfoClick = {
+                    scope.launch { drawerState.close() }
+                    currentView = "visualizzaInfo"
                 }
             )
         },
@@ -93,6 +98,7 @@ fun App() {
                     "aggiungiUtente" -> VistaAddUser( onCloseModal = { currentView = "gestioneUtenti" } )
                     "statistiche" -> vistaStatistiche()
                     "visualizzaUtente" -> VisualizzaUtente( user, onCloseModal = { currentView = "gestioneUtenti"} )
+                    "visualizzaInfo" -> VistaInfo()
                 }
             }
         }
