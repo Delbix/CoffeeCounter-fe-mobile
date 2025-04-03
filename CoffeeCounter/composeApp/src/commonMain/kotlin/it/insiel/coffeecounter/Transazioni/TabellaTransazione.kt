@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import it.insiel.coffeecounter.RichiesteServer.*
 import it.insiel.coffeecounter.utils.CommonDialog
-import it.insiel.coffeecounter.utils.logMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -92,8 +93,9 @@ fun TabellaTransazione( scope: CoroutineScope,
         ) {
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(3.dp)
-                        .background(Color.Blue, RoundedCornerShape(4.dp))
+                    modifier = Modifier.fillMaxWidth().padding(3.dp).height(50.dp)
+                        .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp)),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "ID",
                         modifier = Modifier.weight(1f).testTag("headerID"),
@@ -154,10 +156,18 @@ fun TabellaTransazione( scope: CoroutineScope,
         }
 
         //finestra modale per i messaggi di stato
-        CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
-            isDialogOpen.value = false
-            onCloseModal() //ritorno alla schermata home
+        if ( dialogHeaderColor == Color.Blue ){
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
+                isDialogOpen.value = false
+                onCloseModal() //ritorno alla schermata home
+            }
+        } else {
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                isDialogOpen.value = false
+                onCloseModal() //ritorno alla schermata home
+            }
         }
+
     }
 }
 

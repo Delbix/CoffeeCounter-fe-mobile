@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,7 +78,8 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(3.dp)
-                        .background(Color.Blue, RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp)),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text("Nominativo", modifier = Modifier.padding(8.dp).weight(1f),
                         fontSize = 16.sp,
@@ -97,9 +99,17 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
             }
         }
 
-        CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
-            isDialogOpen.value = false
-            onErrorDetected()
+        //finestra modale per i messaggi di stato
+        if ( dialogHeaderColor == Color.Blue ){
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
+                isDialogOpen.value = false
+                onErrorDetected()
+            }
+        } else {
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                isDialogOpen.value = false
+                onErrorDetected()
+            }
         }
     }
 }

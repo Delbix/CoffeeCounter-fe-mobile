@@ -1,7 +1,6 @@
 package it.insiel.coffeecounter.GestioneUtenti
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +34,7 @@ fun RigaUtente( persona: Persona, onClickVisualizza: (Persona) -> Unit ) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(text = "${persona.nome} ${persona.cognome}", modifier = Modifier.padding(8.dp).weight(1f).align(Alignment.CenterVertically) )
-        Text( text = "${persona.ha_pagato}/${persona.ha_partecipato}", modifier = Modifier.padding(8.dp).weight(1f).align(Alignment.CenterVertically) )
+        Text( text = "${persona.ha_pagato}/${persona.ha_partecipato}", modifier = Modifier.padding(8.dp).weight(1f).align(Alignment.CenterVertically))
         Button(onClick = { onClickVisualizza( persona ) }, modifier = Modifier.padding(8.dp).weight(1f) ) {
             Text("Modifica")
         }

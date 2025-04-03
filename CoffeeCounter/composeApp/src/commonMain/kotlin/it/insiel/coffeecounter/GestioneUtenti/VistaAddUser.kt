@@ -106,9 +106,17 @@ fun VistaAddUser( invioDati: InvioDatiService = InvioDati, onCloseModal: () -> U
             Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f).testTag("error"))
         }
 
-        CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
-            isDialogOpen.value = false
-            onCloseModal()
+        if ( dialogHeaderColor == Color.Blue ){
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
+                isDialogOpen.value = false
+                onCloseModal()
+            }
+        } else {
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                isDialogOpen.value = false
+                onCloseModal()
+            }
         }
+
     }
 }

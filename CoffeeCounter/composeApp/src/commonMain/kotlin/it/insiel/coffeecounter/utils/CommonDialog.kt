@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +35,7 @@ import androidx.compose.ui.window.Dialog
  */
 
 @Composable
-fun CommonDialog(isDialogOpen: Boolean, messaggio: String, header: String = "ModalDialog", headerColor: Color = Color.Blue, onDismissRequest: () -> Unit) {
+fun CommonDialog(isDialogOpen: Boolean, messaggio: String, header: String = "ModalDialog", headerColor: Color = MaterialTheme.colors.primary, onDismissRequest: () -> Unit) {
     if (isDialogOpen) {
         Dialog(onDismissRequest = onDismissRequest) {
             Box(

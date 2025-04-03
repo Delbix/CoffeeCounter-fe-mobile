@@ -150,10 +150,18 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
             Text(text = errorMsg, color = Color.Red, modifier = Modifier.padding(8.dp).scale(1f + shakeAnim.value * 0.05f).testTag("error") )
         }
 
-        CommonDialog(isDialogOpenCommon.value, dialogMessage, dialogHeader, dialogHeaderColor) {
-            isDialogOpenCommon.value = false
-            onCloseModal()
+        if( dialogHeaderColor == Color.Blue ){
+            CommonDialog(isDialogOpenCommon.value, dialogMessage, dialogHeader) {
+                isDialogOpenCommon.value = false
+                onCloseModal()
+            }
+        } else{
+            CommonDialog(isDialogOpenCommon.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                isDialogOpenCommon.value = false
+                onCloseModal()
+            }
         }
+
 
         ConfirmDialog(
             isDialogOpenConfirm.value,

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -47,10 +48,10 @@ import androidx.compose.ui.window.Dialog
  */
 
 @Composable
-fun ConfirmDialog( isDialogOpen: Boolean, messaggio: String = "Sei sicuro?",
-                   header: String = "ModalDialog", headerColor: Color = Color.Blue,
-                   onConfirm: () -> Unit,
-                   onDismiss: () -> Unit){
+fun ConfirmDialog(isDialogOpen: Boolean, messaggio: String = "Sei sicuro?",
+                  header: String = "ModalDialog", headerColor: Color = MaterialTheme.colors.primary ,
+                  onConfirm: () -> Unit,
+                  onDismiss: () -> Unit){
     if (isDialogOpen) {
         Dialog(onDismissRequest = onDismiss) {
             Box(
