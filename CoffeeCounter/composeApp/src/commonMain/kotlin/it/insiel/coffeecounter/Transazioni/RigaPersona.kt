@@ -10,6 +10,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +43,7 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
     var ratePersona: Double = 0.0 //per evitare un errore di divisione per 0
     var valori by remember { mutableStateOf( valoriPadre.copy() ) }
     valori = valoriPadre.copy()
-    var paga by remember { mutableStateOf( persona.id == valori.transazione.pagata_da?.id) }
+    val paga by derivedStateOf { persona.id == valori.transazione.pagata_da?.id } //tiene conto se gli elementi cambiano
     var rate = valori.rate
     //per poter modificare la transazione
     var pagata_da: Persona? = valori.transazione.pagata_da
@@ -112,21 +113,22 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
             modifier = Modifier.weight(1f).testTag("check${persona.id}")
         )
         if ( manuale ) {
+            //TODO bug grafico se applico il filtro(mi toglie spunte quasi a caso e alle volte toglie anche il colore di sfondo).. i dati comunque li manda corretti
             //checkbox di pagamento (visibile solo se siamo in modalità manuale)
             Checkbox(
                 checked = paga,
                 onCheckedChange = { check ->
                     //logica del cambio di stato
                     if ( !partecipa ) { //se non è spuntato il partecipa lo forzo (non posso pagare se non partecipo)
+                        partecipanti.add( persona )
                         partecipa = true
                     }
-                    paga = check
-                    if (paga) {
+                    if (check) {
                         pagata_da = persona
                         valori = valori.copy( transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ) )
                         onMyEvent(valori)
                     } else {
-                        pagata_da = pagata_da
+                        pagata_da = null
                         valori = valori.copy( transazione = valori.transazione.copy( partecipanti = partecipanti, pagata_da = pagata_da ) )
                         onMyEvent(valori)
                     }
