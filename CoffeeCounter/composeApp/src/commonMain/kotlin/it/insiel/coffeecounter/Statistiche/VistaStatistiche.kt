@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -23,17 +24,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.insiel.coffeecounter.RichiesteServer.Persona
 import it.insiel.coffeecounter.RichiesteServer.Richiesta
 import it.insiel.coffeecounter.RichiesteServer.RichiestaDatiService
+import it.insiel.coffeecounter.utils.CommonDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
  * VISTA
- * delle statistiche dell'app
+ * Gestioe delle statistiche dell'app
+ *
+ * **Parametri**
+ * @param richiestaDati [RichiestaDatiService] = servizio per la ricezione dei dati
+ * **Lambda**
+ * @param onCloseModal = evento generato dalla chiusura della finestra modale
  *
  * **Funzioni ausiliarie**
  * pagatore = vedi descr funzione
@@ -41,22 +49,33 @@ import kotlinx.coroutines.launch
  */
 
 @Composable
-fun vistaStatistiche( richiestaDati: RichiestaDatiService = Richiesta) {
+fun vistaStatistiche(
+    richiestaDati: RichiestaDatiService = Richiesta,
+    onCloseModal: () -> Unit
+) {
     val scope: CoroutineScope = rememberCoroutineScope()
     var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }
-
+    //parametri per la finestra modale
+    var dialogHeader by remember { mutableStateOf( "" ) }
+    var dialogHeaderColor by remember { mutableStateOf( Color.Blue ) }
+    var dialogMessage by remember { mutableStateOf( "" ) }
+    val isDialogOpen = remember { mutableStateOf(false) }
+    //loading della pagina --> attesa della richiesta
+    var isLoading by remember { mutableStateOf(true) }
 
     //Al load della pagina
     LaunchedEffect(Unit) {
         scope.launch {
             try {
                 val result = richiestaDati.fetchPersonas()
+                isLoading = false
                 persone = result
             } catch (e:Exception){
-                //TODO handle e.message
-//                dialogHeader = "ERRORE"
-//                dialogMessage = "Errore di ricezione dei dati: \n${e.message} "
-//                isDialogOpen.value = true
+                isLoading = false
+                dialogHeader = "ERRORE"
+                dialogHeaderColor = Color.Red
+                dialogMessage = "Errore di ricezione dei dati: \n${e.message} "
+                isDialogOpen.value = true
             }
         }
     }
@@ -71,26 +90,42 @@ fun vistaStatistiche( richiestaDati: RichiestaDatiService = Richiesta) {
         val pagatoreAward: Persona = pagatore( persone )
         Text("Statistiche dell'App", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        if ( bevitoreAccanitoAward.id != -1 ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Icon(Icons.Default.Favorite, contentDescription = "sideMenu")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Il bevitore accanito è ${bevitoreAccanitoAward.nome} ${bevitoreAccanitoAward.cognome}")
+        if ( isLoading ) {
+            CircularProgressIndicator()
+        } else {
+            if (bevitoreAccanitoAward.id != -1) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Icon(Icons.Default.Favorite, contentDescription = "sideMenu")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Il bevitore accanito è ${bevitoreAccanitoAward.nome} ${bevitoreAccanitoAward.cognome}")
+                }
+            }
+            if (pagatoreAward.id != -1) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = "sideMenu")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "L'utente che ha pagato più volte il caffè è ${pagatoreAward.nome} ${bevitoreAccanitoAward.cognome}")
+                }
             }
         }
-        if ( pagatoreAward.id != -1 ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Icon(Icons.Default.Check, contentDescription = "sideMenu")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "L'utente che ha pagato più volte il caffè è ${pagatoreAward.nome} ${bevitoreAccanitoAward.cognome}")
+        //finestra modale per i messaggi di stato
+        if ( dialogHeaderColor == Color.Blue ){
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
+                isDialogOpen.value = false
+                onCloseModal() //ritorno alla schermata home
+            }
+        } else {
+            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                isDialogOpen.value = false
+                onCloseModal() //ritorno alla schermata home
             }
         }
     }

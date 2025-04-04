@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -70,6 +71,8 @@ fun TabellaTransazione( scope: CoroutineScope,
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpen = remember { mutableStateOf(false) }
     val persone = valori.persone
+    //loading della pagina --> attesa della richiesta
+    var isLoading by remember { mutableStateOf(true) }
     //parametri per il filtro di ricerca
     var query by remember { mutableStateOf("") }
     var showTextField by remember { mutableStateOf(false) }
@@ -90,9 +93,11 @@ fun TabellaTransazione( scope: CoroutineScope,
         scope.launch {
             try {
                 val result = richiesteDati.fetchPersonas()
+                isLoading = false
                 valori = TransazioniUI( result )
             } catch (e:Exception){
                 valori = TransazioniUI( emptyList(), errorMessage = e.message )
+                isLoading = false
             }
         }
     }
@@ -100,111 +105,131 @@ fun TabellaTransazione( scope: CoroutineScope,
     Column(modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (valori.errorMessage != null) {
-            //messaggio di errore nel dialog
-            dialogHeader = "ERRORE!!"
-            dialogHeaderColor = Color.Red
-            dialogMessage = "Errore di ricezione dei dati: \n${valori.errorMessage}"
-            isDialogOpen.value = true
-        }
-        Row(
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(onClick = { showTextField = !showTextField }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+        if ( isLoading ){
+            CircularProgressIndicator()
+        } else {
+            if (valori.errorMessage != null) {
+                //messaggio di errore nel dialog
+                dialogHeader = "ERRORE!!"
+                dialogHeaderColor = Color.Red
+                dialogMessage = "Errore di ricezione dei dati: \n${valori.errorMessage}"
+                isDialogOpen.value = true
             }
-            if (showTextField) {
-                TextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    label = { Text("Filtra per nome o cognome") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().weight(1f)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(3.dp).height(50.dp)
-                        .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp)),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "ID",
-                        modifier = Modifier.weight(1f).testTag("headerID"),
-                        fontWeight = FontWeight.Bold
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(onClick = { showTextField = !showTextField }) {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                }
+                if (showTextField) {
+                    TextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        label = { Text("Filtra per nome o cognome") },
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    Text(text = "Nome Cognome",
-                        modifier = Modifier.weight(3f).testTag("headerNome"),
-                        fontWeight = FontWeight.Bold)
-                    Text(text = "Partecipa",
-                        modifier = Modifier.weight(1f).testTag("headerPartecipa"),
-                        fontWeight = FontWeight.Bold)
-                    if ( manuale ){
-                        Text(text = "Paga",
-                            modifier = Modifier.weight(1f).testTag("headerPaga"),
-                            fontWeight = FontWeight.Bold)
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().weight(1f)
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(3.dp).height(50.dp)
+                            .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp)),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "ID",
+                            modifier = Modifier.weight(1f).testTag("headerID"),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Nome Cognome",
+                            modifier = Modifier.weight(3f).testTag("headerNome"),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Partecipa",
+                            modifier = Modifier.weight(1f).testTag("headerPartecipa"),
+                            fontWeight = FontWeight.Bold
+                        )
+                        if (manuale) {
+                            Text(
+                                text = "Paga",
+                                modifier = Modifier.weight(1f).testTag("headerPaga"),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                items(filteredPersons, key = { it.id }) { persona ->
+                    RigaPersona(persona, valori, manuale) { updatedValori ->
+                        valori = updatedValori.copy()
                     }
                 }
             }
-            items(filteredPersons, key = { it.id }) { persona ->
-                RigaPersona(persona, valori, manuale){ updatedValori ->
-                    valori = updatedValori.copy()
-                }
-            }
-        }
 
-        //bottone di invio dei dati
-        Button(
-            modifier = Modifier.testTag("inviaButton"),
-            onClick = {
-                scope.launch {
-                    try {
-                        if ( valori.transazione.pagata_da == null || valori.transazione.partecipanti.isEmpty() ){
-                            //se la transazione non è pronta per l'invio
-                            dialogHeader = "ERRORE nella creazione della transazione!"
+            //bottone di invio dei dati
+            Button(
+                modifier = Modifier.testTag("inviaButton"),
+                onClick = {
+                    scope.launch {
+                        try {
+                            if (valori.transazione.pagata_da == null || valori.transazione.partecipanti.isEmpty()) {
+                                //se la transazione non è pronta per l'invio
+                                dialogHeader = "ERRORE nella creazione della transazione!"
+                                dialogHeaderColor = Color.Red
+                                dialogMessage =
+                                    "La lista dei partecipanti è vuota o manca chi paga! \nNon verrà registrato nulla!"
+                                isDialogOpen.value = true
+                            } else {
+                                //transazione pronta all'invio, quindi facciamo il tentativo
+                                valori = valori.copy(
+                                    transazione = valori.transazione.copy(
+                                        data = Clock.System.now()
+                                            .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                                    )
+                                )
+                                val transazioneResponse: Transazione =
+                                    invioDati.sendTransazione(valori.transazione)
+                                var partecipanti: String =
+                                    formattaPartecipanti(transazioneResponse.partecipanti)
+                                dialogHeader = "Dati inviati con successo:"
+                                dialogHeaderColor = Color.Blue
+                                dialogMessage =
+                                    "Riepilogo transazione: \nID:${transazioneResponse.id} \nPartecipanti: \n$partecipanti \nPagata da: ${transazioneResponse.pagata_da?.nome} ${transazioneResponse.pagata_da?.cognome}"
+                                isDialogOpen.value = true
+                            }
+                        } catch (e: Exception) {
+                            //messaggio di errore nel dialog
+                            dialogHeader = "ERRORE!!"
                             dialogHeaderColor = Color.Red
-                            dialogMessage = "La lista dei partecipanti è vuota o manca chi paga! \nNon verrà registrato nulla!"
-                            isDialogOpen.value = true
-                        } else {
-                            //transazione pronta all'invio, quindi facciamo il tentativo
-                            valori = valori.copy( transazione = valori.transazione.copy( data = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString() ))
-                            val transazioneResponse:Transazione = invioDati.sendTransazione(valori.transazione)
-                            var partecipanti :String = formattaPartecipanti( transazioneResponse.partecipanti )
-                            dialogHeader = "Dati inviati con successo:"
-                            dialogHeaderColor = Color.Blue
-                            dialogMessage = "Riepilogo transazione: \nID:${transazioneResponse.id} \nPartecipanti: \n$partecipanti \nPagata da: ${transazioneResponse.pagata_da?.nome} ${transazioneResponse.pagata_da?.cognome}"
+                            dialogMessage = "Errore nell'invio dei dati: \n${e.message}"
                             isDialogOpen.value = true
                         }
-                    } catch (e: Exception) {
-                        //messaggio di errore nel dialog
-                        dialogHeader = "ERRORE!!"
-                        dialogHeaderColor = Color.Red
-                        dialogMessage = "Errore nell'invio dei dati: \n${e.message}"
-                        isDialogOpen.value = true
                     }
+                }) {
+                Text("Invia")
+            }
+
+            //finestra modale per i messaggi di stato
+            if (dialogHeaderColor == Color.Blue) {
+                CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
+                    isDialogOpen.value = false
+                    onCloseModal() //ritorno alla schermata home
                 }
-            }) {
-            Text("Invia")
-        }
-
-        //finestra modale per i messaggi di stato
-        if ( dialogHeaderColor == Color.Blue ){
-            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
-                isDialogOpen.value = false
-                onCloseModal() //ritorno alla schermata home
-            }
-        } else {
-            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
-                isDialogOpen.value = false
-                onCloseModal() //ritorno alla schermata home
+            } else {
+                CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                    isDialogOpen.value = false
+                    onCloseModal() //ritorno alla schermata home
+                }
             }
         }
-
     }
 }
 

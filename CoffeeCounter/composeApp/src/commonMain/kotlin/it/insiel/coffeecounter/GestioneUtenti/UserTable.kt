@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -58,7 +59,8 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
     var dialogHeaderColor by remember { mutableStateOf( Color.Red ) } //default colore Rosso per errori
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpen = remember { mutableStateOf(false) }
-
+    //loading della pagina --> attesa della richiesta
+    var isLoading by remember { mutableStateOf(true) }
     //parametri per il filtro di ricerca
     var query by remember { mutableStateOf("") }
     var showTextField by remember { mutableStateOf(false) }
@@ -79,8 +81,10 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
         scope.launch {
             try {
                 val result = richiestaDati.fetchPersonas()
+                isLoading = false
                 persone = result
             } catch (e:Exception){
+                isLoading = false
                 dialogHeader = "ERRORE"
                 dialogMessage = "Errore di ricezione dei dati: \n${e.message} "
                 isDialogOpen.value = true
@@ -94,55 +98,65 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
         .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(3.dp)
-                        .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp)),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("Nominativo", modifier = Modifier.padding(8.dp).weight(1f),
-                        fontSize = 16.sp,
-                        color = Color.White )
-                    Text("Pagato/Partecipato", modifier = Modifier.padding(8.dp).weight(1f),
-                        fontSize = 16.sp,
-                        color = Color.White )
-                    Text("Modifica", modifier = Modifier.padding(8.dp).weight(1f),
-                        fontSize = 16.sp,
-                        color = Color.White )
-                }
-            }
-            items(filteredPersons) { persona ->
-                RigaUtente(persona){ persona ->
-                    onVisualizzaUtente( persona )
-                }
-            }
-        }
-        IconButton(onClick = { showTextField = !showTextField }) {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-        }
-        if (showTextField) {
-            TextField(
-                value = query,
-                onValueChange = { query = it },
-                label = { Text("Filtra per nome o cognome") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        //finestra modale per i messaggi di stato
-        if ( dialogHeaderColor == Color.Blue ){
-            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
-                isDialogOpen.value = false
-                onErrorDetected()
-            }
+        if ( isLoading ){
+            CircularProgressIndicator()
         } else {
-            CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
-                isDialogOpen.value = false
-                onErrorDetected()
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(3.dp)
+                            .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp)),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "Nominativo", modifier = Modifier.padding(8.dp).weight(1f),
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Text(
+                            "Pagato/Partecipato", modifier = Modifier.padding(8.dp).weight(1f),
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Text(
+                            "Modifica", modifier = Modifier.padding(8.dp).weight(1f),
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+                items(filteredPersons) { persona ->
+                    RigaUtente(persona) { persona ->
+                        onVisualizzaUtente(persona)
+                    }
+                }
+            }
+            IconButton(onClick = { showTextField = !showTextField }) {
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+            }
+            if (showTextField) {
+                TextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    label = { Text("Filtra per nome o cognome") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            //finestra modale per i messaggi di stato
+            if (dialogHeaderColor == Color.Blue) {
+                CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
+                    isDialogOpen.value = false
+                    onErrorDetected()
+                }
+            } else {
+                CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader, dialogHeaderColor) {
+                    isDialogOpen.value = false
+                    onErrorDetected()
+                }
             }
         }
     }
