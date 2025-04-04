@@ -9,8 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,6 +59,22 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpen = remember { mutableStateOf(false) }
 
+    //parametri per il filtro di ricerca
+    var query by remember { mutableStateOf("") }
+    var showTextField by remember { mutableStateOf(false) }
+    val filteredPersons = remember(query, persone) {
+        //se il filtro è vuoto li vedo tutti
+        if (query == ""){
+            persone
+        }
+        else{
+            persone.filter {
+                it.nome.contains(query, ignoreCase = true) || it.cognome.contains(query, ignoreCase = true)
+            }
+        }
+    }
+
+    //all'avvio della vista eseguo la chiamata al server per avere la lista di persone presenti
     LaunchedEffect(Unit) {
         scope.launch {
             try {
@@ -67,12 +88,14 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
         }
     }
 
+
+    //VISTA effettiva
     Column(modifier = Modifier.fillMaxSize()
         .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
@@ -92,11 +115,22 @@ fun UserTable( richiestaDati: RichiestaDatiService = Richiesta, onVisualizzaUten
                         color = Color.White )
                 }
             }
-            items(persone) { persona ->
+            items(filteredPersons) { persona ->
                 RigaUtente(persona){ persona ->
                     onVisualizzaUtente( persona )
                 }
             }
+        }
+        IconButton(onClick = { showTextField = !showTextField }) {
+            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+        }
+        if (showTextField) {
+            TextField(
+                value = query,
+                onValueChange = { query = it },
+                label = { Text("Filtra per nome o cognome") },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         //finestra modale per i messaggi di stato

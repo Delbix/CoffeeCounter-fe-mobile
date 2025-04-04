@@ -1,6 +1,7 @@
 package it.insiel.coffeecounter.Transazioni
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,6 +70,20 @@ fun TabellaTransazione( scope: CoroutineScope,
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpen = remember { mutableStateOf(false) }
     val persone = valori.persone
+    //parametri per il filtro di ricerca
+    var query by remember { mutableStateOf("") }
+    var showTextField by remember { mutableStateOf(false) }
+    val filteredPersons = remember(query, persone) {
+        //se il filtro è vuoto li vedo tutti
+        if (query == ""){
+            persone
+        }
+        else{
+            persone.filter {
+                it.nome.contains(query, ignoreCase = true) || it.cognome.contains(query, ignoreCase = true)
+            }
+        }
+    }
 
     //Al load della pagina -> lo fa una volta sola
     LaunchedEffect(Unit) {
@@ -86,6 +106,23 @@ fun TabellaTransazione( scope: CoroutineScope,
             dialogHeaderColor = Color.Red
             dialogMessage = "Errore di ricezione dei dati: \n${valori.errorMessage}"
             isDialogOpen.value = true
+        }
+        Row(
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            IconButton(onClick = { showTextField = !showTextField }) {
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+            }
+            if (showTextField) {
+                TextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    label = { Text("Filtra per nome o cognome") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
         LazyColumn(
@@ -114,7 +151,7 @@ fun TabellaTransazione( scope: CoroutineScope,
                     }
                 }
             }
-            items(persone) { persona ->
+            items(filteredPersons, key = { it.id }) { persona ->
                 RigaPersona(persona, valori, manuale){ updatedValori ->
                     valori = updatedValori.copy()
                 }

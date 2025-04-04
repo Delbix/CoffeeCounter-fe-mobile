@@ -39,7 +39,7 @@ import it.insiel.coffeecounter.RichiesteServer.Persona
 fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
                 onMyEvent: (TransazioniUI) -> Unit ){
     //fa in modo che si aggiorni la riga
-    var partecipa by remember { mutableStateOf(persona.checked) }
+    val partecipa = remember { mutableStateOf(persona.checked) }
     var ratePersona: Double = 0.0 //per evitare un errore di divisione per 0
     var valori by remember { mutableStateOf( valoriPadre.copy() ) }
     valori = valoriPadre.copy()
@@ -53,12 +53,12 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
         ratePersona = persona.ha_pagato.toDouble() / persona.ha_partecipato.toDouble()
     }
     //se la persona partecipa ed il suo rate è < di quello attuale ==> aggiorna valori
-    if ( partecipa && ratePersona < rate ){
+    if ( partecipa.value && ratePersona < rate ){
         valori = valori.copy( rate = ratePersona, transazione = valori.transazione.copy( pagata_da = persona ) )
         onMyEvent(valori)
     }
 
-    var backgroundColor = if (partecipa && valori.transazione.pagata_da == persona) Color.Green else Color.LightGray
+    var backgroundColor = if (partecipa.value && valori.transazione.pagata_da == persona) Color.Green else Color.LightGray
 
     Row(modifier = Modifier.fillMaxWidth()//.padding(3.dp)
         .background(backgroundColor, RoundedCornerShape(4.dp)),
@@ -78,12 +78,12 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
         )
         //Checkbox di partecipazione
         Checkbox(
-            checked = partecipa,
+            checked = partecipa.value,
             onCheckedChange = { check ->
                 //logica del cambio di stato
-                partecipa = check
+                partecipa.value = check
                 persona.checked = check
-                if (partecipa) {
+                if (partecipa.value) {
                     partecipanti.add( persona )
 
                     if ( ratePersona < rate ) {
@@ -113,15 +113,15 @@ fun RigaPersona(persona: Persona, valoriPadre: TransazioniUI, manuale: Boolean,
             modifier = Modifier.weight(1f).testTag("check${persona.id}")
         )
         if ( manuale ) {
-            //TODO bug grafico se applico il filtro(mi toglie spunte quasi a caso e alle volte toglie anche il colore di sfondo).. i dati comunque li manda corretti
             //checkbox di pagamento (visibile solo se siamo in modalità manuale)
             Checkbox(
                 checked = paga,
                 onCheckedChange = { check ->
                     //logica del cambio di stato
-                    if ( !partecipa ) { //se non è spuntato il partecipa lo forzo (non posso pagare se non partecipo)
+                    if ( !partecipa.value ) { //se non è spuntato il partecipa lo forzo (non posso pagare se non partecipo)
                         partecipanti.add( persona )
-                        partecipa = true
+                        persona.checked = true
+                        partecipa.value  = true
                     }
                     if (check) {
                         pagata_da = persona
