@@ -86,14 +86,15 @@ fun vistaStatistiche(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val bevitoreAccanitoAward: Persona = bevitoreAccanito( persone )
-        val pagatoreAward: Persona = pagatore( persone )
+        val bevitoreAccanitoAward: List<Persona> = bevitoreAccanito( persone )
+        val pagatoreAward: List<Persona> = pagatore( persone )
         Text("Statistiche dell'App", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
         if ( isLoading ) {
             CircularProgressIndicator()
         } else {
-            if (bevitoreAccanitoAward.id != -1) {
+            //BEVITORE ACCANITO AWARD
+            if ( bevitoreAccanitoAward.isEmpty() ){
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -101,10 +102,46 @@ fun vistaStatistiche(
                 ) {
                     Icon(Icons.Default.Favorite, contentDescription = "sideMenu")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Il bevitore accanito è ${bevitoreAccanitoAward.nome} ${bevitoreAccanitoAward.cognome}")
+                    Text(text = "Non è stato ancora bevuto nessun caffè")
+                }
+            } else if ( bevitoreAccanitoAward.size == 1 ){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Icon(Icons.Default.Favorite, contentDescription = "sideMenu")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Il bevitore accanito è ${bevitoreAccanitoAward.get(0).nome} ${bevitoreAccanitoAward.get(0).cognome}")
+                }
+            } else {
+                var listaBevitoriParimerito = ""
+                pagatoreAward.forEach { persona ->
+                    listaBevitoriParimerito = listaBevitoriParimerito+" - "+persona.nome+" "+persona.cognome+"\n"
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Icon(Icons.Default.Favorite, contentDescription = "sideMenu")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Gli utenti che hanno pagato più volte il caffè sono: \n${listaBevitoriParimerito}")
                 }
             }
-            if (pagatoreAward.id != -1) {
+
+            //PAGATORE AWARD
+            if ( pagatoreAward.isEmpty()){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(10.dp)
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = "sideMenu")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Non è stato pagato ancora nessun caffè!")
+                }
+            } else if ( pagatoreAward.size == 1 ){
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -112,7 +149,21 @@ fun vistaStatistiche(
                 ) {
                     Icon(Icons.Default.Check, contentDescription = "sideMenu")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "L'utente che ha pagato più volte il caffè è ${pagatoreAward.nome} ${bevitoreAccanitoAward.cognome}")
+                    Text(text = "L'utente che ha pagato più volte il caffè è ${pagatoreAward.get(0).nome} ${pagatoreAward.get(0).cognome}")
+                }
+            } else {
+                var listaPagatoriParimerito = ""
+                pagatoreAward.forEach { persona ->
+                    listaPagatoriParimerito = listaPagatoriParimerito+" - "+persona.nome+" "+persona.cognome+"\n"
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = "sideMenu")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Gli utenti che hanno pagato più volte il caffè sono: \n${listaPagatoriParimerito}")
                 }
             }
         }
@@ -132,35 +183,21 @@ fun vistaStatistiche(
 }
 
 /**
- * Funzione che torna la persona che ha pagato + volte
+ * Decreta quale/i persone hanno pagato più volte
  * @param persone [List<Persona>] = elenco su cui eseguire l'operazione
- * @return Persona, la persona con ha_partecipato + grande.. se non ci sono persone ritorno una persona con id -1 (ERRORE)
+ * @return List<Persona>|emptyList, le persone/a con ha_partecipato + grande
  */
-fun pagatore(persone: List<Persona>): Persona {
-    var result: Persona = Persona( -1, "","", -1, -1)
-    var counter = -1
-    persone.forEach { persona: Persona ->
-        if ( persona.ha_pagato > counter ){
-            result = persona
-            counter = persona.ha_pagato
-        }
-    }
-    return result
+fun pagatore(persone: List<Persona>): List<Persona> {
+    val ha_pagatoList = persone.maxOfOrNull { it.ha_pagato } ?: return emptyList<Persona>()
+    return persone.filter { it.ha_pagato == ha_pagatoList }
 }
 
 /**
- * Funzione che torna la persona che ha partecipato + volte
+ * Decreta quale/i persone hanno partecipato più volte
  * @param persone [List<Persona>] = elenco su cui eseguire l'operazione
- * @return Persona, la persona con ha_partecipato + grande.. se non ci sono persone ritorno una persona con id -1 (ERRORE)
+ * @return List<Persona>|emptyList, la persona/e con ha_partecipato + grande
  */
-fun bevitoreAccanito(persone: List<Persona>): Persona {
-    var result: Persona = Persona( -1, "","", -1, -1)
-    var counter = -1
-    persone.forEach { persona: Persona ->
-        if ( persona.ha_partecipato > counter ){
-            result = persona
-            counter = persona.ha_partecipato
-        }
-    }
-    return result
+fun bevitoreAccanito(persone: List<Persona>): List<Persona> {
+    val ha_partecipatoList = persone.maxOfOrNull { it.ha_partecipato } ?: return emptyList<Persona>()
+    return persone.filter { it.ha_partecipato == ha_partecipatoList }
 }
