@@ -55,6 +55,7 @@ fun vistaStatistiche(
 ) {
     val scope: CoroutineScope = rememberCoroutineScope()
     var persone by remember { mutableStateOf<List<Persona>>(emptyList()) }
+    val dataUltimaTransazione = remember { mutableStateOf("") }
     //parametri per la finestra modale
     var dialogHeader by remember { mutableStateOf( "" ) }
     var dialogHeaderColor by remember { mutableStateOf( Color.Blue ) }
@@ -67,9 +68,11 @@ fun vistaStatistiche(
     LaunchedEffect(Unit) {
         scope.launch {
             try {
-                val result = richiestaDati.fetchPersonas()
+                val richiestaPersone = richiestaDati.fetchPersonas()
+                val richiestaUltimaTransazione = richiestaDati.getDataUltimaTransazione()
                 isLoading = false
-                persone = result
+                persone = richiestaPersone
+                dataUltimaTransazione.value = richiestaUltimaTransazione
             } catch (e:Exception){
                 isLoading = false
                 dialogHeader = "ERRORE"
@@ -165,6 +168,26 @@ fun vistaStatistiche(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Gli utenti che hanno pagato più volte il caffè sono: \n${listaPagatoriParimerito}")
                 }
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Icon(Icons.Default.Check, contentDescription = "sideMenu")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Ultima transazione registrata in data "+dataUltimaTransazione.value.substring(0,10))
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Icon(Icons.Default.Check, contentDescription = "sideMenu")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Persone presenti in archivio "+persone.size)
             }
         }
         //finestra modale per i messaggi di stato

@@ -21,4 +21,14 @@ object Richiesta: RichiestaDatiService {
             val responseBody: String = response.bodyAsText()
             return Json.decodeFromString<List<Persona>>(responseBody)
     }
+
+    /**
+     * Chiama il server per ricevere la data dell'ultima transazione ricevuta (per le statistiche)
+     */
+    override suspend fun getDataUltimaTransazione(): String {
+        val client = createHttpClient()
+        val response: HttpResponse = client.post("${AppInit.API_URL}/angular/db/statistiche/ultimatransazione")
+        val responseBody: String = response.bodyAsText()
+        return Json.decodeFromString<String>(responseBody)
+    }
 }
