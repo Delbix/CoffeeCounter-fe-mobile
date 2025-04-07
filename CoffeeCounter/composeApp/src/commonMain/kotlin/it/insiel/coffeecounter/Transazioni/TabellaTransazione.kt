@@ -120,15 +120,15 @@ fun TabellaTransazione( scope: CoroutineScope,
                 horizontalArrangement = Arrangement.Start,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = { showTextField = !showTextField }) {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                IconButton(onClick = { showTextField = !showTextField }, modifier = Modifier.testTag("filterIcon")) {
+                    Icon( imageVector = Icons.Default.Search, contentDescription = "Search" )
                 }
                 if (showTextField) {
                     TextField(
                         value = query,
                         onValueChange = { query = it },
                         label = { Text("Filtra per nome o cognome") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().testTag("filterInput")
                     )
                 }
             }
