@@ -202,7 +202,7 @@ fun TabellaTransazione( scope: CoroutineScope,
                                 dialogHeader = "Dati inviati con successo:"
                                 dialogHeaderColor = Color.Blue
                                 dialogMessage =
-                                    "Riepilogo transazione: \nID:${transazioneResponse.id} \nPartecipanti: \n$partecipanti \nPagata da: ${transazioneResponse.pagata_da?.nome} ${transazioneResponse.pagata_da?.cognome}"
+                                    "Riepilogo transazione: \nID:${transazioneResponse.id} \nData ${transazioneResponse.data} \nPartecipanti: \n$partecipanti \nPagata da: ${transazioneResponse.pagata_da?.nome} ${transazioneResponse.pagata_da?.cognome}"
                                 isDialogOpen.value = true
                             }
                         } catch (e: Exception) {
