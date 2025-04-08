@@ -119,8 +119,8 @@ fun vistaStatistiche(
                 }
             } else {
                 var listaBevitoriParimerito = ""
-                pagatoreAward.forEach { persona ->
-                    listaBevitoriParimerito = listaBevitoriParimerito+" - "+persona.nome+" "+persona.cognome+"\n"
+                bevitoreAccanitoAward.forEach { persona ->
+                    listaBevitoriParimerito += " - "+persona.nome+" "+persona.cognome+"\n"
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -129,7 +129,7 @@ fun vistaStatistiche(
                 ) {
                     Icon(Icons.Default.Favorite, contentDescription = "sideMenu")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Gli utenti che hanno pagato più volte il caffè sono: \n${listaBevitoriParimerito}")
+                    Text(text = "Gli utenti che hanno bevuto più volte il caffè sono: \n${listaBevitoriParimerito}")
                 }
             }
 
@@ -157,7 +157,7 @@ fun vistaStatistiche(
             } else {
                 var listaPagatoriParimerito = ""
                 pagatoreAward.forEach { persona ->
-                    listaPagatoriParimerito = listaPagatoriParimerito+" - "+persona.nome+" "+persona.cognome+"\n"
+                    listaPagatoriParimerito += " - "+persona.nome+" "+persona.cognome+"\n"
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
