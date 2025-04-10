@@ -60,6 +60,8 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpenCommon = remember { mutableStateOf(false) }
     val isDialogOpenConfirm = remember { mutableStateOf(false) }
+    //abilitare i bottoni
+    val isEnabled = remember { mutableStateOf(true) }
 
     //viene eseguita solo quando il triggerAnim cambia valore
     LaunchedEffect(triggerAnim.value){
@@ -72,6 +74,7 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
             )
         )
         shakeAnim.snapTo(0f)
+        isEnabled.value = true
     }
 
     Column(
@@ -98,51 +101,56 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
         )
         Button(
             modifier = Modifier.testTag("modifica"),
+            enabled = isEnabled.value,
             onClick = {
-            scope.launch {
-                if (nome == "") {
-                    errorMsg = "Il campo Nome deve essere valorizzato"
-                    triggerAnim.value = !triggerAnim.value
-                } else {
-                    if ( persona.nome == nome && persona.cognome == cognome ){
-                        errorMsg = "Non hai modificato nulla!"
+                isEnabled.value = false
+                scope.launch {
+                    if (nome == "") {
+                        errorMsg = "Il campo Nome deve essere valorizzato"
                         triggerAnim.value = !triggerAnim.value
                     } else {
-                        try {
-                            val personaMod = Persona(
-                                persona.id,
-                                nome,
-                                cognome,
-                                persona.ha_pagato,
-                                persona.ha_partecipato,
-                                false
-                            )
-                            val personaResponse:Persona = invioDati.sendPersona(personaMod)
-                            if ( personaResponse.id == -2 ){
-                                throw Exception( "Non è possibile rinominare questa persona con un nome già presente in archivio! \nLa persona ${personaResponse.nome} ${personaResponse.cognome} è già presente nel database \n" )
+                        if ( persona.nome == nome && persona.cognome == cognome ){
+                            errorMsg = "Non hai modificato nulla!"
+                            triggerAnim.value = !triggerAnim.value
+                        } else {
+                            try {
+                                val personaMod = Persona(
+                                    persona.id,
+                                    nome,
+                                    cognome,
+                                    persona.ha_pagato,
+                                    persona.ha_partecipato,
+                                    false
+                                )
+                                val personaResponse:Persona = invioDati.sendPersona(personaMod)
+                                if ( personaResponse.id == -2 ){
+                                    throw Exception( "Non è possibile rinominare questa persona con un nome già presente in archivio! \nLa persona ${personaResponse.nome} ${personaResponse.cognome} è già presente nel database \n" )
+                                }
+                                dialogHeader = "Dati modificati con successo:"
+                                dialogHeaderColor = Color.Blue
+                                dialogMessage =
+                                    "Nome: ${persona.nome} --> ${personaResponse.nome} \nCognome: ${persona.cognome} --> ${personaResponse.cognome}"
+                            } catch (e: Exception) {
+                                dialogHeader = "Errore nell'invio dei dati:"
+                                dialogHeaderColor = Color.Red
+                                dialogMessage = "${e.message}"
                             }
-                            dialogHeader = "Dati modificati con successo:"
-                            dialogHeaderColor = Color.Blue
-                            dialogMessage =
-                                "Nome: ${persona.nome} --> ${personaResponse.nome} \nCognome: ${persona.cognome} --> ${personaResponse.cognome}"
-                        } catch (e: Exception) {
-                            dialogHeader = "Errore nell'invio dei dati:"
-                            dialogHeaderColor = Color.Red
-                            dialogMessage = "${e.message}"
+                            isDialogOpenCommon.value = true
                         }
-                        isDialogOpenCommon.value = true
                     }
                 }
-            }
         }) {
             Text("Salva modifiche")
         }
 
         Button(
             modifier = Modifier.testTag("elimina"),
+            enabled = isEnabled.value,
             onClick = {
-            isDialogOpenConfirm.value = true
-        }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
+                isEnabled.value = false
+                isDialogOpenConfirm.value = true
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
             Text("Elimina" )
         }
 
@@ -193,6 +201,7 @@ fun VisualizzaUtente( persona: Persona, invioDati: InvioDatiService = InvioDati,
             }
         ){
             isDialogOpenConfirm.value = false
+            isEnabled.value = true
         }
     }
 }

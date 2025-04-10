@@ -38,6 +38,8 @@ fun VistaAddUser( invioDati: InvioDatiService = InvioDati, onCloseModal: () -> U
     var dialogHeaderColor by remember { mutableStateOf( Color.Blue ) }
     var dialogMessage by remember { mutableStateOf( "" ) }
     val isDialogOpen = remember { mutableStateOf(false) }
+    //abilitare i bottoni
+    val isEnabled = remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -63,41 +65,44 @@ fun VistaAddUser( invioDati: InvioDatiService = InvioDati, onCloseModal: () -> U
         )
         Button(
             modifier = Modifier.testTag("addUser"),
+            enabled = isEnabled.value,
             onClick = {
-            scope.launch {
-                if ( nome == "" ){
-                    errorMsg = "Il campo Nome deve essere valorizzato"
-                    //effetto shake
-                    scope.launch {
-                        shakeAnim.animateTo(
-                            targetValue = 1f,
-                            animationSpec = repeatable(
-                                iterations = 3,
-                                animation = tween(durationMillis = 100, easing = LinearEasing),
-                                repeatMode = RepeatMode.Reverse
+                isEnabled.value = false
+                scope.launch {
+                    if ( nome == "" ){
+                        errorMsg = "Il campo Nome deve essere valorizzato"
+                        //effetto shake
+                        scope.launch {
+                            shakeAnim.animateTo(
+                                targetValue = 1f,
+                                animationSpec = repeatable(
+                                    iterations = 3,
+                                    animation = tween(durationMillis = 100, easing = LinearEasing),
+                                    repeatMode = RepeatMode.Reverse
+                                )
                             )
-                        )
-                        shakeAnim.snapTo(0f)
-                    }
-                }else{
-                    try {
-                        val persona = Persona(0, nome, cognome, 0, 0, false)
-                        val personaResponse:Persona = invioDati.sendPersona(persona)
-                        if ( personaResponse.id == -2 ){
-                            throw Exception( "La persona ${personaResponse.nome} ${personaResponse.cognome} è già presente nel database \n" )
+                            shakeAnim.snapTo(0f)
+                            isEnabled.value = true
                         }
-                        dialogHeader = "Dati inviati con successo"
-                        dialogHeaderColor = Color.Blue
-                        dialogMessage = "Riepilogo: \nID:${personaResponse.id} \nNome:${personaResponse.nome} \nCognome:${personaResponse.cognome}"
-                        isDialogOpen.value = true
-                    } catch (e: Exception) {
-                        dialogHeader = "Errore nell'invio dei dati!!"
-                        dialogHeaderColor = Color.Red
-                        dialogMessage = "${e.message} \nRiprova!"
-                        isDialogOpen.value = true
+                    }else{
+                        try {
+                            val persona = Persona(0, nome, cognome, 0, 0, false)
+                            val personaResponse:Persona = invioDati.sendPersona(persona)
+                            if ( personaResponse.id == -2 ){
+                                throw Exception( "La persona ${personaResponse.nome} ${personaResponse.cognome} è già presente nel database \n" )
+                            }
+                            dialogHeader = "Dati inviati con successo"
+                            dialogHeaderColor = Color.Blue
+                            dialogMessage = "Riepilogo: \nID:${personaResponse.id} \nNome:${personaResponse.nome} \nCognome:${personaResponse.cognome}"
+                            isDialogOpen.value = true
+                        } catch (e: Exception) {
+                            dialogHeader = "Errore nell'invio dei dati!!"
+                            dialogHeaderColor = Color.Red
+                            dialogMessage = "${e.message} \nRiprova!"
+                            isDialogOpen.value = true
+                        }
                     }
                 }
-            }
         }) {
             Text("Aggiungi")
         }

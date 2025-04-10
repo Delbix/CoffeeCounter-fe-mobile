@@ -87,6 +87,8 @@ fun TabellaTransazione( scope: CoroutineScope,
             }
         }
     }
+    //abilitare i bottoni
+    val isEnabled = remember { mutableStateOf(true) }
 
     //Al load della pagina -> lo fa una volta sola
     LaunchedEffect(Unit) {
@@ -177,7 +179,9 @@ fun TabellaTransazione( scope: CoroutineScope,
             //bottone di invio dei dati
             Button(
                 modifier = Modifier.testTag("inviaButton"),
+                enabled = isEnabled.value,
                 onClick = {
+                    isEnabled.value = false
                     scope.launch {
                         try {
                             if (valori.transazione.pagata_da == null || valori.transazione.partecipanti.isEmpty()) {
@@ -221,6 +225,7 @@ fun TabellaTransazione( scope: CoroutineScope,
             if (dialogHeaderColor == Color.Blue) {
                 CommonDialog(isDialogOpen.value, dialogMessage, dialogHeader) {
                     isDialogOpen.value = false
+                    isEnabled.value = true
                     onCloseModal() //ritorno alla schermata home
                 }
             } else {
