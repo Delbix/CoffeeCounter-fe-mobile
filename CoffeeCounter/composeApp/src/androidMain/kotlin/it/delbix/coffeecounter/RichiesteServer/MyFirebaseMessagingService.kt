@@ -27,7 +27,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Se l'app è in foreground, mostra una notifica (o aggiorna la UI)
         if (isAppInForeground()) {
-            showNotification( data["title"] ?: remoteMessage.notification?.title ?: "Notifica", data["message"] ?: remoteMessage.notification?.body ?: "")
+            showNotification( remoteMessage.notification?.title ?: "Notifica", remoteMessage.notification?.body ?: "")
         }
     }
 
