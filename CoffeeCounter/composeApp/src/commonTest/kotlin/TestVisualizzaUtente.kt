@@ -6,9 +6,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import io.mockk.coEvery
 import io.mockk.mockk
-import it.insiel.coffeecounter.GestioneUtenti.VisualizzaUtente
-import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
-import it.insiel.coffeecounter.RichiesteServer.Persona
+import it.delbix.coffeecounter.GestioneUtenti.VisualizzaUtente
+import it.delbix.coffeecounter.GlobalContext
+import it.delbix.coffeecounter.RichiesteServer.InvioDatiService
+import it.delbix.coffeecounter.RichiesteServer.Persona
+import org.koin.compose.viewmodel.koinViewModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,9 +22,16 @@ class TestVisualizzaUtente {
     @OptIn( ExperimentalTestApi::class)
     @Test
     fun testVisualizzazione() = runComposeUiTest{
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
+
         setContent {
-            VisualizzaUtente(p1) {  }
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente() {  }
         }
 
         //verifico che i campi nome e cognome esistano
@@ -37,9 +46,15 @@ class TestVisualizzaUtente {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testInterazioneErrore() = runComposeUiTest {
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
         setContent {
-            VisualizzaUtente(p1) {  }
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente() {  }
         }
 
         onNodeWithTag("modifica").assertExists()
@@ -55,12 +70,18 @@ class TestVisualizzaUtente {
     @Test
     fun testInterazioneModifica() = runComposeUiTest {
         val invioDatiMock = mockk<InvioDatiService> {
-            coEvery { sendPersona(any()) } returns Persona( id = 1, nome = "Fede", cognome = "", ha_partecipato = 0, ha_pagato = 0 )
+            coEvery { sendPersona(any()) } returns Persona( id = 1, nome = "Fede", cognome = "", ha_partecipato = 0, ha_pagato = 0, caffe_pagati = 0 )
         }
         var closeModal:String = ""
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
         setContent {
-            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente(invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
         }
 
         //Modifico il nome
@@ -90,9 +111,15 @@ class TestVisualizzaUtente {
             coEvery { sendPersona(any()) } throws RuntimeException("c'è stato un problema")
         }
         var closeModal:String = ""
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
         setContent {
-            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente(invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
         }
 
         //Modifico il nome
@@ -122,9 +149,15 @@ class TestVisualizzaUtente {
             coEvery { eliminaPersona(any()) } returns "true"
         }
         var closeModal:String = ""
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
         setContent {
-            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente(invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
         }
 
         //Modifico il nome
@@ -155,9 +188,15 @@ class TestVisualizzaUtente {
             coEvery { eliminaPersona(any()) } returns "false" //qualcosa è andato storto
         }
         var closeModal:String = ""
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
         setContent {
-            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente(invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
         }
 
         //Modifico il nome
@@ -189,9 +228,15 @@ class TestVisualizzaUtente {
             coEvery { eliminaPersona(any()) } throws RuntimeException("c'è stato un problema") //exception
         }
         var closeModal:String = ""
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
         setContent {
-            VisualizzaUtente(persona = p1, invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
+            val globalContext: GlobalContext = koinViewModel<GlobalContext>()
+            globalContext.currentPersonaDaModificare.value.id = 1
+            globalContext.currentPersonaDaModificare.value.nome = "Fede"
+            globalContext.currentPersonaDaModificare.value.cognome = ""
+            globalContext.currentPersonaDaModificare.value.ha_pagato = 5
+            globalContext.currentPersonaDaModificare.value.ha_partecipato = 12
+
+            VisualizzaUtente(invioDati = invioDatiMock, onCloseModal = { closeModal = "cambioContesto"})
         }
 
         //Modifico il nome

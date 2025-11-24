@@ -10,11 +10,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import io.mockk.coEvery
 import io.mockk.mockk
-import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
-import it.insiel.coffeecounter.RichiesteServer.Persona
-import it.insiel.coffeecounter.RichiesteServer.RichiestaDatiService
-import it.insiel.coffeecounter.RichiesteServer.Transazione
-import it.insiel.coffeecounter.Transazioni.TabellaTransazione
+import it.delbix.coffeecounter.RichiesteServer.InvioDatiService
+import it.delbix.coffeecounter.RichiesteServer.Persona
+import it.delbix.coffeecounter.RichiesteServer.RichiestaDatiService
+import it.delbix.coffeecounter.RichiesteServer.Transazione
+import it.delbix.coffeecounter.Transazioni.TabellaTransazione
 import kotlinx.coroutines.CoroutineScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,8 +27,8 @@ class TestTabellaTransazioniManuale {
     @OptIn( ExperimentalTestApi::class)
     @Test
     fun testVisualizzazione() = runComposeUiTest{
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12, 5, false )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2, 1, false )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val getDatiMock = mockk<RichiestaDatiService> {
@@ -65,8 +65,8 @@ class TestTabellaTransazioniManuale {
     @Test
     fun testInterazioneErrore() = runComposeUiTest{
 
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12, 5, false )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2, 1, false )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val getDatiMock = mockk<RichiestaDatiService> {
@@ -93,8 +93,8 @@ class TestTabellaTransazioniManuale {
     @Test
     fun testInterazioneErrore2() = runComposeUiTest{
 
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12, 5, false )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2,1, false )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val getDatiMock = mockk<RichiestaDatiService> {
@@ -127,8 +127,8 @@ class TestTabellaTransazioniManuale {
     fun testInterazioneSend() = runComposeUiTest{
         //mock
 
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12, 5, false )
+        val p2: Persona = Persona( 2, "Gatto","", 1, 2, 1, false )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val invioDatiMock = mockk<InvioDatiService> {
@@ -170,8 +170,8 @@ class TestTabellaTransazioniManuale {
     fun testInterazioneSendError() = runComposeUiTest{
         //mock
 
-        val p1: Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2: Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12, 10 )
+        val p2:Persona = Persona( 2, "Gatto","", 1, 2, 2 )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val invioDatiMock = mockk<InvioDatiService> {
@@ -214,8 +214,8 @@ class TestTabellaTransazioniManuale {
     fun testFiltro() = runComposeUiTest{
         //mock
 
-        val p1:Persona = Persona( 1, "Fede", "", 5, 12 )
-        val p2:Persona = Persona( 2, "Gatto","", 1, 2 )
+        val p1: Persona = Persona( 1, "Fede", "", 5, 12, 10 )
+        val p2:Persona = Persona( 2, "Gatto","", 1, 2, 2 )
         val pList:MutableList<Persona> = mutableListOf( p1, p2 )
 
         val getDatiMock = mockk<RichiestaDatiService> {

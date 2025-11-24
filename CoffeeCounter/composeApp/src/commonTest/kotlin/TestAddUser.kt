@@ -6,9 +6,9 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import io.mockk.coEvery
 import io.mockk.mockk
-import it.insiel.coffeecounter.GestioneUtenti.VistaAddUser
-import it.insiel.coffeecounter.RichiesteServer.InvioDatiService
-import it.insiel.coffeecounter.RichiesteServer.Persona
+import it.delbix.coffeecounter.GestioneUtenti.VistaAddUser
+import it.delbix.coffeecounter.RichiesteServer.InvioDatiService
+import it.delbix.coffeecounter.RichiesteServer.Persona
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -53,7 +53,7 @@ class TestAddUser {
     @Test
     fun testInvioDati() = runComposeUiTest {
         val invioDatiMock = mockk<InvioDatiService> {
-            coEvery { sendPersona(any()) } returns Persona( id = 1, nome = "Fede", cognome = "", ha_partecipato = 0, ha_pagato = 0 )
+            coEvery { sendPersona(any()) } returns Persona( id = 1, nome = "Fede", cognome = "", ha_partecipato = 0, ha_pagato = 0, caffe_pagati = 0 )
         }
         var closeModal:String = ""
 
