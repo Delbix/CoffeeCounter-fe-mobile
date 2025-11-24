@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+
+<!--    ACCESSIBILITA-->
+    <string name="accSearch">Search</string>
+    <string name="accInfoIcon">icona informazioni</string>
+    <string name="accSettingsIcon">icona inpostazioni</string>
+    <string name="accDrawerIcon">icona menu</string>
+    <string name="accAppIcon">icona applicazione</string>
+    <string name="accWarningIcon">warning icon</string>
+
+    <string name="app-name" >CoffeeCounter</string>
+    <string name="app-title" >Coffee Counter APP</string>
+    <string name="addLabel" >Aggiungi</string>
+    <string name="accOkButton">OK</string>
+    <string name="accConfirm">Conferma</string>
+    <string name="accAnnulla">Annulla</string>
+
+<!--    PAGINA INIZIALE-->
+    <string name="caffeAutomatico" >Caffè automatico</string>
+    <string name="caffeManuale" >Caffè manuale</string>
+    <string name="gestioneUtenti" >Gestione utenti</string>
+    <string name="statistiche" >Statistiche</string>
+
+<!--    GESTIONE UTENTI-->
+    <string name="addUserButton" >Aggiungi Utente</string>
+    <string name="elencoUtentiTitle" >Elenco Utenti</string>
+    <string name="tableHeaderNome" >Nominativo</string>
+    <string name="tableHeaderPagatoPartecipato" >Pagato/Partecipato</string>
+    <string name="modifica" >Modifica</string>
+    <string name="filterPlaceHolder" >Filtra per nome o cognome</string>
+
+<!--    AGGIUNGI/MODIFICA UTENTE-->
+    <string name="adduserTitle" >Aggiungi un utente al database</string>
+    <string name="nameLabel" >Nome </string>
+    <string name="surnameLabel" >Cognome </string>
+    <string name="saveEdit" >Salva modifiche</string>
+    <string name="delete" >Elimina</string>
+    <string name="editUser" >Modifica utente</string>
+
+<!--    MOD CAFFE-->
+    <string name="tableHeaderID">ID</string>
+    <string name="tableHeaderNomeCognome">Nome Cognome</string>
+    <string name="tableHeaderPartecipa">Partecipa</string>
+    <string name="tableHeaderPaga">Paga</string>
+    <string name="descrManuale">Modalità manuale</string>
+    <string name="descrAutomatica">Modalità automatica e criterio di scelta %1$s</string>
+
+<!--    APP INFO-->
+    <string name="appInfoTitle" >Informazioni sull'app</string>
+    <string name="currentVersion" >Current versione %1$s</string>
+    <string name="infoDevelopers" >Sviluppata da Federico Jr su supervisione di Christian</string>
+
+
+<!--    SETTINGS-->
+    <string name="criterioSettingDescription" >In modalità automatica sono disponibili due criteri di scelta dell'utente pagatore.\nCriterio1: viene selezionato l'utente che ha pagato complessivamente meno caffè degli altri. \nCriterio2: viene attribuito un "rate" a ciascun utente calcolato da volte_che_ha_pagato\volte_che_ha_partecipato e viene scelto quello con il "rate" più basso</string>
+    <string name="criterio1" >Criterio 1</string>
+    <string name="criterio2" >Criterio 2</string>
+
+<!--    STATISTICHE-->
+    <string name="statisticheTitle">Statistiche dell'App</string>
+
+<!--    MESSAGGI ERRORE (non li uso al momento, perchè dovrei dichiarare le stringhe al di fuori di dove effettivamente le utilizzo! Appesantisco il codice per nulla al momento) -->
+    <string name="errTitleGeneric">ERRORE!!</string>
+    <string name="errTitleSend">Errore nell'invio dei dati!!</string>
+    <string name="errRicezione">Errore di ricezione dei dati: </string>
+    <string name="errName">Il campo Nome deve essere valorizzato</string>
+    <string name="errTryAgain">Riprova!</string>
+    <string name="nothingChanged">Non hai modificato nulla!</string>
+
+
+</resources>

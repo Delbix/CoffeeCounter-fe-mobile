@@ -1,0 +1,1 @@
+Qui bisogna inserire google-service.json (file che viene fornito da Firebase) con le configurazioni del vostro firebase

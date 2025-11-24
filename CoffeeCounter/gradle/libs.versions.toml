@@ -29,6 +29,10 @@ material3Android = "1.3.1"
 assertk = "0.28.1"
 junitVersion = "4.12"
 uiTestJunit4Android = "1.7.8"
+multiplatformSettings = "1.3.0"
+koin-version = "4.0.4"
+firebaseMessagingKtx = "24.1.1"
+firebaseCommonKtx = "21.0.0"
 
 [libraries]
 androidx-core-ktx-v170 = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -50,6 +54,8 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx_lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 
+multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
@@ -70,6 +76,16 @@ androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", vers
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
+
+# depency injection
+koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin-version" }
+koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin-version" }
+koinAndroidCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-version" }
+# Koin test
+koinTest = { module = "io.insert-koin:koin-test", version.ref = "koin-version" }
+koinTestJunit = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin-version" }
+firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

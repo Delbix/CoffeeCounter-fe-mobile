@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    //firebase
+    id("com.google.gms.google-services")
     kotlin("plugin.serialization")
 }
 
@@ -66,6 +68,13 @@ kotlin {
             implementation(libs.ktor.client.cio)
             implementation(libs.kotlinx.datetime)
             implementation("co.touchlab:kermit:1.0.0")
+            implementation(libs.multiplatform.settings)
+            //koin - dependancy injection
+            implementation(libs.koinCore)
+            implementation(libs.koinAndroidCompose)
+            implementation(libs.multiplatform.settings)
+            //Firebase
+            implementation("com.google.firebase:firebase-messaging:23.0.0")
             //specifica per android
             //implementation(libs.androidx.lifecycle.viewmodel.compose)
 //            implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -88,11 +97,11 @@ kotlin {
 }
 
 android {
-    namespace = "it.insiel.coffeecounter"
+    namespace = "it.delbix.coffeecounter"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "it.insiel.coffeecounter"
+        applicationId = "it.delbix.coffeecounter"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
