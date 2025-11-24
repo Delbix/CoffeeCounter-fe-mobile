@@ -18,16 +18,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Invia il token al tuo backend
     }
 
-//    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-//        val data = remoteMessage.data
-//        val pushManager = AndroidPushNotificationManager(applicationContext)
-//        pushManager.onNotificationReceived(data)
-//
-//        // Mostra la notifica anche se l'app è in foreground
-//        showNotification(data)
-//    }
-
-    //TODO ho aggiunto questo codice per gestire le notifiche quando l'app è in
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val data = remoteMessage.data
         val pushManager = AndroidPushNotificationManager(applicationContext)
@@ -35,9 +25,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Gestione standard
         pushManager.onNotificationReceived(data)
 
-        // Se l'app è in foreground, mostra una notifica o aggiorna la UI
+        // Se l'app è in foreground, mostra una notifica (o aggiorna la UI)
         if (isAppInForeground()) {
-            showNotification( data["title"] ?: "Titolo", data["message"] ?: "Messaggio")
+            showNotification( data["title"] ?: remoteMessage.notification?.title ?: "Notifica", data["message"] ?: remoteMessage.notification?.body ?: "")
         }
     }
 

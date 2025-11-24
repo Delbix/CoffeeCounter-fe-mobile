@@ -6,11 +6,12 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessaging
+import it.delbix.coffeecounter.R
 
 class AndroidPushNotificationManager(private val context: Context) : PushNotificationManager {
 
     override fun getToken(): String {
-        return FirebaseMessaging.getInstance().token.result
+        return FirebaseMessaging.getInstance().token.result!!
     }
 
     override fun onNotificationReceived(data: Map<String, String>) {
@@ -31,7 +32,7 @@ class AndroidPushNotificationManager(private val context: Context) : PushNotific
         }
 
         val notification = NotificationCompat.Builder(context, "default_channel_id")
-//            .setSmallIcon(R.drawable.ic_notification) // Assicurati di avere un'icona
+            .setSmallIcon(R.drawable.ic_launcher_foreground) // Assicurati di avere un'icona
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
